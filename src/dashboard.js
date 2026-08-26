@@ -514,28 +514,105 @@ router.get('/', requireAuth, (req, res) => {
     .btn-icon:hover { background: #f1f5f9; color: var(--text-main); }
     .btn-icon.delete:hover { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
 
-    /* Pipelines Grid */
+    /* Visual Pipelines Board */
     .pipelines-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      display: flex;
+      flex-direction: column;
       gap: 20px;
     }
     .pipeline-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 24px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     .pipeline-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;
     }
-    .pipeline-header h3 { font-size: 16px; font-weight: 700; color: var(--text-main); }
-    .stage-item {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 8px 12px; margin-bottom: 6px; background: #f8fafc; border-radius: 6px; font-size: 13px;
-      border-left: 4px solid var(--primary);
+    .pipeline-header-title { display: flex; align-items: center; gap: 10px; }
+    .pipeline-header-title h3 { font-size: 17px; font-weight: 700; color: var(--text-main); }
+    
+    /* Horizontal Visual Kanban Flow */
+    .stages-flow-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 8px 0 16px 0;
+    }
+    .stage-flow-node {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      min-width: 170px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      border-top: 4px solid var(--primary);
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .stage-node-title { font-size: 13px; font-weight: 700; color: var(--text-main); }
+    .stage-node-meta { font-size: 11px; color: var(--text-muted); }
+    .flow-arrow { color: #cbd5e1; font-size: 14px; flex-shrink: 0; }
+
+    /* Interactive Pipeline Modal Stages Builder */
+    .stages-builder-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 14px 0;
+      max-height: 280px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .stage-builder-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .color-chip {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      cursor: pointer;
+      border: 2px solid #fff;
+      box-shadow: 0 0 0 1px #cbd5e1;
+      flex-shrink: 0;
+    }
+    .preset-templates-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+    .preset-chip {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border: 1px solid #dbeafe;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    .preset-chip:hover { background: #dbeafe; }
+
+    /* Live Preview Bar */
+    .live-preview-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px;
+      margin-top: 14px;
     }
 
     /* Overview Stats Cards */
@@ -616,7 +693,7 @@ router.get('/', requireAuth, (req, res) => {
       display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
     }
     .modal {
-      background: #fff; border-radius: 16px; max-width: 650px; width: 100%;
+      background: #fff; border-radius: 16px; max-width: 680px; width: 100%;
       max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
     }
     .modal-header {
@@ -747,12 +824,12 @@ router.get('/', requireAuth, (req, res) => {
       </div>
     </div>
 
-    <!-- TAB 2: FUNIS / PIPELINES -->
+    <!-- TAB 2: FUNIS / PIPELINES (VISUAL ROADMAP FLOW) -->
     <div id="tab-pipelines" class="tab-content">
       <div class="section-toolbar">
         <div class="section-title">
           <h2>Funis de Vendas do Kommo (Pipelines)</h2>
-          <p>Visualize os funis e etapas sincronizados com o CRM ou crie novos funis diretamente</p>
+          <p>Visualize o fluxo de etapas de cada funil ou crie novos funis de forma 100% visual</p>
         </div>
         <button class="btn-create" onclick="openCreatePipelineModal()">
           <i class="fas fa-plus"></i>
@@ -761,7 +838,7 @@ router.get('/', requireAuth, (req, res) => {
       </div>
 
       <div class="pipelines-grid" id="pipelinesGrid">
-        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+        <div style="text-align: center; padding: 40px; color: var(--text-muted);">
           <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px;"></i>
           <p>Carregando funis do Kommo...</p>
         </div>
@@ -1030,27 +1107,49 @@ router.get('/', requireAuth, (req, res) => {
     </div>
   </div>
 
-  <!-- MODAL: CRIAR NOVO FUNIL (PIPELINE) -->
+  <!-- MODAL: CONSTRUTOR VISUAL DE NOVO FUNIL (PIPELINE) -->
   <div class="modal-backdrop" id="pipelineModal">
     <div class="modal">
       <div class="modal-header">
-        <h3>Criar Novo Funil de Vendas (Pipeline)</h3>
+        <h3><i class="fas fa-filter" style="color: var(--primary); margin-right: 8px;"></i> Construtor Visual de Funil (Pipeline)</h3>
         <button class="btn-close" onclick="closePipelineModal()"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <div class="form-group">
-          <label for="newPipelineName">Nome do Funil *</label>
-          <input type="text" id="newPipelineName" class="form-control" placeholder="Ex: Muay Thai Adulto - Unidade Mercês" required>
+          <label for="newPipelineName">Nome do Novo Funil *</label>
+          <input type="text" id="newPipelineName" class="form-control" placeholder="Ex: Vendas Muay Thai - Unidade Mercês" oninput="renderStageLivePreview()" required>
         </div>
+
+        <div style="margin: 16px 0;">
+          <label style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: block; margin-bottom: 8px;">Modelos Rápidos de Funil (1 Clique):</label>
+          <div class="preset-templates-bar">
+            <button type="button" class="preset-chip" onclick="applyPipelinePreset('cwb')"><i class="fas fa-shield-alt"></i> Vendas Academia (CWB)</button>
+            <button type="button" class="preset-chip" onclick="applyPipelinePreset('whatsapp')"><i class="fas fa-robot"></i> Atendimento IA WhatsApp</button>
+            <button type="button" class="preset-chip" onclick="applyPipelinePreset('reactivation')"><i class="fas fa-redo"></i> Reativação de Alunos</button>
+          </div>
+        </div>
+
         <div class="form-group">
-          <label for="newPipelineStages">Etapas Iniciais (uma por linha)</label>
-          <textarea id="newPipelineStages" class="form-control" rows="4" placeholder="Primeiro Contato&#10;Qualificação&#10;Aula Agendada&#10;Matrícula Realizada"></textarea>
+          <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+            <label style="margin-bottom: 0;">Etapas do Funil</label>
+            <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 12px;" onclick="addStageBuilderItem()">
+              <i class="fas fa-plus"></i> Adicionar Etapa
+            </button>
+          </div>
+          
+          <div class="stages-builder-list" id="stagesBuilderList"></div>
+        </div>
+
+        <!-- Live Visual Preview -->
+        <div class="live-preview-box">
+          <label style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Visualização do Fluxo em Tempo Real:</label>
+          <div class="stages-flow-wrapper" id="modalLiveFlowPreview" style="margin-top: 8px; padding-bottom: 4px;"></div>
         </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn-secondary" onclick="closePipelineModal()">Cancelar</button>
         <button type="button" class="btn-create" onclick="savePipelineFromModal()">
-          <i class="fas fa-check"></i> Criar Funil no Kommo
+          <i class="fas fa-check"></i> Criar Funil no Kommo CRM
         </button>
       </div>
     </div>
@@ -1061,6 +1160,10 @@ router.get('/', requireAuth, (req, res) => {
     const START_TIME = Date.now();
     let currentAutomations = [];
     let kommoPipelines = [];
+
+    // Stage colors palette
+    const PRESET_COLORS = ['#2563eb', '#16a34a', '#d97706', '#7c3aed', '#0891b2', '#dc2626'];
+    let builderStages = [];
 
     function switchTab(tabId) {
       document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
@@ -1182,13 +1285,13 @@ router.get('/', requireAuth, (req, res) => {
       }
     }
 
-    function openCreateModal() {
+    function openCreateModal(defaultPipelineId = null) {
       document.getElementById('modalTitle').textContent = 'Nova Automação';
       document.getElementById('autoId').value = '';
       document.getElementById('autoName').value = '';
       document.getElementById('autoDesc').value = '';
       document.getElementById('autoTrigger').value = 'message_add';
-      document.getElementById('autoPipeline').value = 'all';
+      document.getElementById('autoPipeline').value = defaultPipelineId || 'all';
       updateStagesDropdown();
       document.getElementById('autoRequiredTags').value = '';
       document.getElementById('autoExcludedTags').value = '';
@@ -1296,7 +1399,7 @@ router.get('/', requireAuth, (req, res) => {
       }
     }
 
-    // ===== GESTÃO DE PIPELINES (FUNIS) =====
+    // ===== GESTÃO DE PIPELINES (FUNIS) VISUAL ROADMAP =====
     async function loadKommoPipelines() {
       try {
         const r = await fetch(API_BASE + '/kommo/pipelines');
@@ -1319,7 +1422,7 @@ router.get('/', requireAuth, (req, res) => {
     function renderPipelinesGrid() {
       const grid = document.getElementById('pipelinesGrid');
       if (!kommoPipelines || kommoPipelines.length === 0) {
-        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhum funil encontrado no Kommo.</div>';
+        grid.innerHTML = '<div style="text-align: center; padding: 40px; color: var(--text-muted);">Nenhum funil encontrado no Kommo CRM.</div>';
         return;
       }
 
@@ -1328,16 +1431,24 @@ router.get('/', requireAuth, (req, res) => {
         return \`
           <div class="pipeline-card">
             <div class="pipeline-header">
-              <h3>\${escapeHtml(p.name)}</h3>
-              <span class="badge badge-trigger">ID \${p.id}</span>
+              <div class="pipeline-header-title">
+                <h3>\${escapeHtml(p.name)}</h3>
+                <span class="badge badge-trigger">ID \${p.id}</span>
+                <span style="font-size: 12px; color: var(--text-muted);">(\${statuses.length} Etapas)</span>
+              </div>
+              <button class="btn-create" style="padding: 6px 12px; font-size: 12px;" onclick="openCreateModal('\${p.id}')">
+                <i class="fas fa-plus"></i> Criar Automação para este Funil
+              </button>
             </div>
-            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">\${statuses.length} Etapas configuradas:</p>
-            <div>
-              \${statuses.map(st => \`
-                <div class="stage-item" style="border-left-color: \${st.color || 'var(--primary)'}">
-                  <span>\${escapeHtml(st.name)}</span>
-                  <span style="font-size: 11px; color: var(--text-muted);">ID \${st.id}</span>
+            
+            <div class="stages-flow-wrapper">
+              \${statuses.map((st, idx) => \`
+                <div class="stage-flow-node" style="border-top-color: \${st.color || 'var(--primary)'}">
+                  <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Etapa \${idx + 1}</span>
+                  <span class="stage-node-title">\${escapeHtml(st.name)}</span>
+                  <span class="stage-node-meta">ID \${st.id}</span>
                 </div>
+                \${idx < statuses.length - 1 ? '<i class="fas fa-arrow-right flow-arrow"></i>' : ''}
               \`).join('')}
             </div>
           </div>
@@ -1345,9 +1456,10 @@ router.get('/', requireAuth, (req, res) => {
       }).join('');
     }
 
+    // ===== CONSTRUTOR VISUAL DE PIPELINE NO MODAL =====
     function openCreatePipelineModal() {
       document.getElementById('newPipelineName').value = '';
-      document.getElementById('newPipelineStages').value = 'Primeiro Contato\nQualificação\nAula Agendada\nMatrícula Realizada';
+      applyPipelinePreset('cwb');
       document.getElementById('pipelineModal').style.display = 'flex';
     }
 
@@ -1355,20 +1467,111 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('pipelineModal').style.display = 'none';
     }
 
+    function applyPipelinePreset(type) {
+      if (type === 'cwb') {
+        builderStages = [
+          { name: 'Primeiro Contato', color: '#2563eb' },
+          { name: 'Qualificação', color: '#0891b2' },
+          { name: 'Aula Experimental', color: '#d97706' },
+          { name: 'Matrícula Realizada', color: '#16a34a' }
+        ];
+      } else if (type === 'whatsapp') {
+        builderStages = [
+          { name: 'Novo Lead', color: '#2563eb' },
+          { name: 'Em Atendimento IA', color: '#7c3aed' },
+          { name: 'Horário Agendado', color: '#d97706' },
+          { name: 'Atendimento Concluído', color: '#16a34a' }
+        ];
+      } else if (type === 'reactivation') {
+        builderStages = [
+          { name: 'Lead Inativo', color: '#dc2626' },
+          { name: 'Mensagem Enviada', color: '#2563eb' },
+          { name: 'Respondeu / Negociando', color: '#d97706' },
+          { name: 'Rematriculado', color: '#16a34a' }
+        ];
+      }
+      renderStageBuilderList();
+    }
+
+    function renderStageBuilderList() {
+      const container = document.getElementById('stagesBuilderList');
+      container.innerHTML = builderStages.map((st, idx) => \`
+        <div class="stage-builder-item">
+          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); width: 20px;">#\${idx + 1}</span>
+          <input type="color" class="color-chip" value="\${st.color}" onchange="builderStages[\${idx}].color=this.value; renderStageLivePreview()">
+          <input type="text" class="form-control" value="\${escapeHtml(st.name)}" placeholder="Nome da etapa" oninput="builderStages[\${idx}].name=this.value; renderStageLivePreview()" style="flex: 1;">
+          
+          <button type="button" class="btn-icon" onclick="moveStageUp(\${idx})" title="Mover para cima" \${idx === 0 ? 'disabled style="opacity:0.3"' : ''}><i class="fas fa-arrow-up"></i></button>
+          <button type="button" class="btn-icon" onclick="moveStageDown(\${idx})" title="Mover para baixo" \${idx === builderStages.length - 1 ? 'disabled style="opacity:0.3"' : ''}><i class="fas fa-arrow-down"></i></button>
+          <button type="button" class="btn-icon delete" onclick="removeStageBuilderItem(\${idx})" title="Excluir"><i class="fas fa-trash"></i></button>
+        </div>
+      \`).join('');
+      renderStageLivePreview();
+    }
+
+    function addStageBuilderItem() {
+      const color = PRESET_COLORS[builderStages.length % PRESET_COLORS.length];
+      builderStages.push({ name: 'Nova Etapa', color });
+      renderStageBuilderList();
+    }
+
+    function removeStageBuilderItem(idx) {
+      if (builderStages.length <= 1) {
+        alert('O funil deve conter pelo menos 1 etapa.');
+        return;
+      }
+      builderStages.splice(idx, 1);
+      renderStageBuilderList();
+    }
+
+    function moveStageUp(idx) {
+      if (idx <= 0) return;
+      const temp = builderStages[idx];
+      builderStages[idx] = builderStages[idx - 1];
+      builderStages[idx - 1] = temp;
+      renderStageBuilderList();
+    }
+
+    function moveStageDown(idx) {
+      if (idx >= builderStages.length - 1) return;
+      const temp = builderStages[idx];
+      builderStages[idx] = builderStages[idx + 1];
+      builderStages[idx + 1] = temp;
+      renderStageBuilderList();
+    }
+
+    function renderStageLivePreview() {
+      const preview = document.getElementById('modalLiveFlowPreview');
+      if (!builderStages || builderStages.length === 0) {
+        preview.innerHTML = '<span style="font-size: 12px; color: var(--text-muted);">Nenhuma etapa configurada</span>';
+        return;
+      }
+      preview.innerHTML = builderStages.map((st, idx) => \`
+        <div class="stage-flow-node" style="border-top-color: \${st.color || 'var(--primary)'}; min-width: 130px; padding: 10px 12px;">
+          <span style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Etapa \${idx + 1}</span>
+          <span style="font-size: 12px; font-weight: 700; color: var(--text-main);">\${escapeHtml(st.name || 'Sem nome')}</span>
+        </div>
+        \${idx < builderStages.length - 1 ? '<i class="fas fa-arrow-right flow-arrow"></i>' : ''}
+      \`).join('');
+    }
+
     async function savePipelineFromModal() {
       const name = document.getElementById('newPipelineName').value.trim();
       if (!name) {
-        alert('Informe o nome do funil.');
+        alert('Por favor, informe o nome do funil.');
         return;
       }
-      const rawStages = document.getElementById('newPipelineStages').value.split('\n').map(s => s.trim()).filter(Boolean);
-      const statuses = rawStages.map(s => ({ name: s }));
+      const validStages = builderStages.filter(s => s.name && s.name.trim());
+      if (validStages.length === 0) {
+        alert('Configure pelo menos 1 etapa válida.');
+        return;
+      }
 
       try {
         const r = await fetch(API_BASE + '/kommo/pipelines', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name, statuses })
+          body: JSON.stringify({ name, statuses: validStages })
         });
         if (r.ok) {
           alert('Funil criado com sucesso no Kommo CRM!');
