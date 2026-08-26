@@ -3,7 +3,7 @@ import crypto from 'crypto';
 import fs from 'fs';
 import multer from 'multer';
 import { getChatHistory } from './redis.js';
-import { getLead, getPipelines, getCustomFields } from './kommo.js';
+import { getLead, getPipelines, createPipeline, getCustomFields } from './kommo.js';
 import { addLog } from './logger.js';
 import { reloadContext } from './agent.js';
 import { readContextState, saveContextText, saveContextFile, writeContextState } from './promptStore.js';
@@ -273,14 +273,14 @@ router.get('/logout', (req, res) => {
   res.redirect('/home/workflows/login');
 });
 
-// ===== DASHBOARD PRINCIPAL (Clean White UI, Sem Emojis, Gestão Completa de Automações) =====
+// ===== DASHBOARD PRINCIPAL =====
 router.get('/', requireAuth, (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <title>Painel de Automações - Kommo Bot</title>
+  <title>Painel de Automações & Funis - Kommo Bot</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     :root {
@@ -514,6 +514,30 @@ router.get('/', requireAuth, (req, res) => {
     .btn-icon:hover { background: #f1f5f9; color: var(--text-main); }
     .btn-icon.delete:hover { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
 
+    /* Pipelines Grid */
+    .pipelines-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+      gap: 20px;
+    }
+    .pipeline-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .pipeline-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 16px; padding-bottom: 10px; border-bottom: 1px solid #f1f5f9;
+    }
+    .pipeline-header h3 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    .stage-item {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 8px 12px; margin-bottom: 6px; background: #f8fafc; border-radius: 6px; font-size: 13px;
+      border-left: 4px solid var(--primary);
+    }
+
     /* Overview Stats Cards */
     .stats-grid {
       display: grid;
@@ -639,7 +663,7 @@ router.get('/', requireAuth, (req, res) => {
       <div class="brand-icon"><i class="fas fa-network-wired"></i></div>
       <div class="brand-title">
         <h1>Kommo Bot &bull; CWB Fight Club</h1>
-        <span>Central de Automações e IA</span>
+        <span>Central de Automações, Funis e IA</span>
       </div>
     </div>
     <div class="header-actions">
@@ -660,6 +684,10 @@ router.get('/', requireAuth, (req, res) => {
       <button class="tab-btn active" onclick="switchTab('tab-automations')">
         <i class="fas fa-sitemap"></i>
         <span>Automações</span>
+      </button>
+      <button class="tab-btn" onclick="switchTab('tab-pipelines')">
+        <i class="fas fa-filter"></i>
+        <span>Funis (Pipelines)</span>
       </button>
       <button class="tab-btn" onclick="switchTab('tab-overview')">
         <i class="fas fa-chart-line"></i>
@@ -703,7 +731,7 @@ router.get('/', requireAuth, (req, res) => {
       <div class="section-toolbar">
         <div class="section-title">
           <h2>Regras de Automação</h2>
-          <p>Configure respostas automáticas, transbordo humano e ações em etapas do Kommo</p>
+          <p>Crie e gerencie respostas automáticas, transbordo humano e ações em etapas do Kommo</p>
         </div>
         <button class="btn-create" onclick="openCreateModal()">
           <i class="fas fa-plus"></i>
@@ -719,7 +747,28 @@ router.get('/', requireAuth, (req, res) => {
       </div>
     </div>
 
-    <!-- TAB 2: MÉTRICAS -->
+    <!-- TAB 2: FUNIS / PIPELINES -->
+    <div id="tab-pipelines" class="tab-content">
+      <div class="section-toolbar">
+        <div class="section-title">
+          <h2>Funis de Vendas do Kommo (Pipelines)</h2>
+          <p>Visualize os funis e etapas sincronizados com o CRM ou crie novos funis diretamente</p>
+        </div>
+        <button class="btn-create" onclick="openCreatePipelineModal()">
+          <i class="fas fa-plus"></i>
+          <span>Novo Funil / Pipeline</span>
+        </button>
+      </div>
+
+      <div class="pipelines-grid" id="pipelinesGrid">
+        <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">
+          <i class="fas fa-spinner fa-spin" style="font-size: 24px; margin-bottom: 8px;"></i>
+          <p>Carregando funis do Kommo...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: MÉTRICAS -->
     <div id="tab-overview" class="tab-content">
       <div class="stats-grid">
         <div class="stat-card">
@@ -753,7 +802,7 @@ router.get('/', requireAuth, (req, res) => {
       </div>
     </div>
 
-    <!-- TAB 3: BASE DE CONHECIMENTO IA -->
+    <!-- TAB 4: BASE DE CONHECIMENTO IA -->
     <div id="tab-context" class="tab-content">
       <div class="card">
         <div class="card-header">
@@ -799,7 +848,7 @@ router.get('/', requireAuth, (req, res) => {
       </div>
     </div>
 
-    <!-- TAB 4: HISTÓRICO & LOGS -->
+    <!-- TAB 5: HISTÓRICO & LOGS -->
     <div id="tab-history" class="tab-content">
       <div class="card">
         <div class="card-header">
@@ -836,7 +885,7 @@ router.get('/', requireAuth, (req, res) => {
       </div>
     </div>
 
-    <!-- TAB 5: CONFIGURAÇÕES -->
+    <!-- TAB 6: CONFIGURAÇÕES -->
     <div id="tab-settings" class="tab-content">
       <div class="card">
         <div class="card-header">
@@ -909,8 +958,15 @@ router.get('/', requireAuth, (req, res) => {
             
             <div class="form-group">
               <label for="autoPipeline">Funil / Pipeline do Kommo</label>
-              <select id="autoPipeline" class="form-control">
+              <select id="autoPipeline" class="form-control" onchange="updateStagesDropdown()">
                 <option value="all">Todos os Funis</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="autoStage">Etapa / Status do Funil</label>
+              <select id="autoStage" class="form-control">
+                <option value="all">Todas as Etapas</option>
               </select>
             </div>
 
@@ -969,6 +1025,32 @@ router.get('/', requireAuth, (req, res) => {
         <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
         <button type="button" class="btn-create" onclick="saveAutomationFromModal()">
           <i class="fas fa-check"></i> Salvar Automação
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: CRIAR NOVO FUNIL (PIPELINE) -->
+  <div class="modal-backdrop" id="pipelineModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Criar Novo Funil de Vendas (Pipeline)</h3>
+        <button class="btn-close" onclick="closePipelineModal()"><i class="fas fa-times"></i></button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label for="newPipelineName">Nome do Funil *</label>
+          <input type="text" id="newPipelineName" class="form-control" placeholder="Ex: Muay Thai Adulto - Unidade Mercês" required>
+        </div>
+        <div class="form-group">
+          <label for="newPipelineStages">Etapas Iniciais (uma por linha)</label>
+          <textarea id="newPipelineStages" class="form-control" rows="4" placeholder="Primeiro Contato&#10;Qualificação&#10;Aula Agendada&#10;Matrícula Realizada"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-secondary" onclick="closePipelineModal()">Cancelar</button>
+        <button type="button" class="btn-create" onclick="savePipelineFromModal()">
+          <i class="fas fa-check"></i> Criar Funil no Kommo
         </button>
       </div>
     </div>
@@ -1106,6 +1188,8 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoName').value = '';
       document.getElementById('autoDesc').value = '';
       document.getElementById('autoTrigger').value = 'message_add';
+      document.getElementById('autoPipeline').value = 'all';
+      updateStagesDropdown();
       document.getElementById('autoRequiredTags').value = '';
       document.getElementById('autoExcludedTags').value = '';
       document.getElementById('autoKeywords').value = '';
@@ -1125,6 +1209,8 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoName').value = a.name || '';
       document.getElementById('autoDesc').value = a.description || '';
       document.getElementById('autoTrigger').value = a.trigger || 'message_add';
+      document.getElementById('autoPipeline').value = a.conditions?.pipelineId || 'all';
+      updateStagesDropdown(a.conditions?.stageId || 'all');
       document.getElementById('autoRequiredTags').value = (a.conditions?.requiredTags || []).join(', ');
       document.getElementById('autoExcludedTags').value = (a.conditions?.excludedTags || []).join(', ');
       document.getElementById('autoKeywords').value = a.conditions?.keywordMatch || '';
@@ -1140,6 +1226,20 @@ router.get('/', requireAuth, (req, res) => {
 
     function closeModal() {
       document.getElementById('autoModal').style.display = 'none';
+    }
+
+    function updateStagesDropdown(selectedStageId = 'all') {
+      const pipelineId = document.getElementById('autoPipeline').value;
+      const stageSelect = document.getElementById('autoStage');
+      stageSelect.innerHTML = '<option value="all">Todas as Etapas</option>';
+      
+      if (pipelineId !== 'all') {
+        const p = kommoPipelines.find(item => String(item.id) === String(pipelineId));
+        const statuses = p?._embedded?.statuses || [];
+        statuses.forEach(st => {
+          stageSelect.innerHTML += \`<option value="\${st.id}" \${String(st.id) === String(selectedStageId) ? 'selected' : ''}>\${escapeHtml(st.name)}</option>\`;
+        });
+      }
     }
 
     function toggleActionFields() {
@@ -1162,6 +1262,7 @@ router.get('/', requireAuth, (req, res) => {
         trigger: document.getElementById('autoTrigger').value,
         conditions: {
           pipelineId: document.getElementById('autoPipeline').value,
+          stageId: document.getElementById('autoStage').value,
           requiredTags: document.getElementById('autoRequiredTags').value.split(',').map(s => s.trim()).filter(Boolean),
           excludedTags: document.getElementById('autoExcludedTags').value.split(',').map(s => s.trim()).filter(Boolean),
           keywordMatch: document.getElementById('autoKeywords').value.trim(),
@@ -1192,6 +1293,92 @@ router.get('/', requireAuth, (req, res) => {
       } catch (err) {
         console.error(err);
         alert('Erro ao salvar.');
+      }
+    }
+
+    // ===== GESTÃO DE PIPELINES (FUNIS) =====
+    async function loadKommoPipelines() {
+      try {
+        const r = await fetch(API_BASE + '/kommo/pipelines');
+        if (!r.ok) return;
+        kommoPipelines = await r.json();
+        
+        // Atualiza selects
+        const sel = document.getElementById('autoPipeline');
+        sel.innerHTML = '<option value="all">Todos os Funis</option>' + kommoPipelines.map(p => \`
+          <option value="\${p.id}">\${escapeHtml(p.name)}</option>
+        \`).join('');
+
+        // Renderiza grid de pipelines
+        renderPipelinesGrid();
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    function renderPipelinesGrid() {
+      const grid = document.getElementById('pipelinesGrid');
+      if (!kommoPipelines || kommoPipelines.length === 0) {
+        grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhum funil encontrado no Kommo.</div>';
+        return;
+      }
+
+      grid.innerHTML = kommoPipelines.map(p => {
+        const statuses = p._embedded?.statuses || [];
+        return \`
+          <div class="pipeline-card">
+            <div class="pipeline-header">
+              <h3>\${escapeHtml(p.name)}</h3>
+              <span class="badge badge-trigger">ID \${p.id}</span>
+            </div>
+            <p style="font-size: 12px; color: var(--text-muted); margin-bottom: 12px;">\${statuses.length} Etapas configuradas:</p>
+            <div>
+              \${statuses.map(st => \`
+                <div class="stage-item" style="border-left-color: \${st.color || 'var(--primary)'}">
+                  <span>\${escapeHtml(st.name)}</span>
+                  <span style="font-size: 11px; color: var(--text-muted);">ID \${st.id}</span>
+                </div>
+              \`).join('')}
+            </div>
+          </div>
+        \`;
+      }).join('');
+    }
+
+    function openCreatePipelineModal() {
+      document.getElementById('newPipelineName').value = '';
+      document.getElementById('newPipelineStages').value = 'Primeiro Contato\nQualificação\nAula Agendada\nMatrícula Realizada';
+      document.getElementById('pipelineModal').style.display = 'flex';
+    }
+
+    function closePipelineModal() {
+      document.getElementById('pipelineModal').style.display = 'none';
+    }
+
+    async function savePipelineFromModal() {
+      const name = document.getElementById('newPipelineName').value.trim();
+      if (!name) {
+        alert('Informe o nome do funil.');
+        return;
+      }
+      const rawStages = document.getElementById('newPipelineStages').value.split('\n').map(s => s.trim()).filter(Boolean);
+      const statuses = rawStages.map(s => ({ name: s }));
+
+      try {
+        const r = await fetch(API_BASE + '/kommo/pipelines', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, statuses })
+        });
+        if (r.ok) {
+          alert('Funil criado com sucesso no Kommo CRM!');
+          closePipelineModal();
+          loadKommoPipelines();
+        } else {
+          alert('Erro ao criar funil no Kommo.');
+        }
+      } catch (err) {
+        alert('Erro ao criar funil.');
       }
     }
 
@@ -1367,18 +1554,6 @@ router.get('/', requireAuth, (req, res) => {
       }
     }
 
-    async function loadKommoPipelines() {
-      try {
-        const r = await fetch(API_BASE + '/kommo/pipelines');
-        if (!r.ok) return;
-        kommoPipelines = await r.json();
-        const sel = document.getElementById('autoPipeline');
-        sel.innerHTML = '<option value="all">Todos os Funis</option>' + kommoPipelines.map(p => \`
-          <option value="\${p.id}">\${escapeHtml(p.name)}</option>
-        \`).join('');
-      } catch (err) {}
-    }
-
     function escapeHtml(str) {
       if (!str) return '';
       return String(str)
@@ -1390,10 +1565,10 @@ router.get('/', requireAuth, (req, res) => {
 
     // Inicialização
     loadAutomations();
+    loadKommoPipelines();
     loadExecutions();
     loadLogs();
     loadContextState();
-    loadKommoPipelines();
 
     setInterval(loadExecutions, 10000);
     setInterval(loadLogs, 15000);
@@ -1435,13 +1610,25 @@ router.delete('/api/automations/:id', requireAuth, (req, res) => {
   res.status(404).json({ error: 'Automation not found' });
 });
 
-// ===== API: Pipelines do Kommo =====
+// ===== APIs: Pipelines do Kommo =====
 router.get('/api/kommo/pipelines', requireAuth, async (req, res) => {
   try {
     const pipelines = await getPipelines();
     res.json(pipelines);
   } catch (err) {
     res.json([]);
+  }
+});
+
+router.post('/api/kommo/pipelines', requireAuth, async (req, res) => {
+  try {
+    const { name, statuses } = req.body;
+    if (!name) return res.status(400).json({ error: 'Nome do pipeline é obrigatório' });
+    const created = await createPipeline(name, statuses);
+    addLog('pipeline', 'success', `Novo funil "${name}" criado no Kommo CRM`);
+    res.json({ success: true, pipeline: created });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

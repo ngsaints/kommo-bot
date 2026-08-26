@@ -149,6 +149,27 @@ export async function getPipelines() {
   }
 }
 
+export async function createPipeline(name, statuses = []) {
+  try {
+    const payload = [{
+      name,
+      sort: 1,
+      _embedded: statuses.length > 0 ? {
+        statuses: statuses.map((st, idx) => ({
+          name: typeof st === 'string' ? st : st.name,
+          color: st.color || '#3b82f6',
+          sort: (idx + 1) * 10
+        }))
+      } : undefined
+    }];
+    const { data } = await api.post('/leads/pipelines', payload);
+    return data._embedded?.pipelines?.[0] || data;
+  } catch (err) {
+    console.error('Erro ao criar pipeline no Kommo:', err.response?.data || err.message);
+    throw err;
+  }
+}
+
 export async function getCustomFields() {
   try {
     const { data } = await api.get('/leads/custom_fields');
@@ -188,6 +209,7 @@ export default {
   removeTag,
   addLeadNote,
   getPipelines,
+  createPipeline,
   getCustomFields,
   sendWhatsApp
 };
