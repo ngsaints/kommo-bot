@@ -15,7 +15,6 @@ let cachedFAQ = null;
 
 /**
  * Busca o conteúdo do Google Docs publicado e extrai SOMENTE o texto do corpo
- * (remove scripts/styles/head que o Google injeta na página)
  */
 async function fetchGoogleDoc(url) {
   try {
@@ -56,7 +55,7 @@ async function fetchGoogleDoc(url) {
 
     return text;
   } catch (err) {
-    console.error(`Erro ao buscar Google Doc (${url.slice(0, 50)}...):`, err.message);
+    console.error(`[Docs] Erro ao buscar Google Doc (${url.slice(0, 50)}...):`, err.message);
     return null;
   }
 }
@@ -69,49 +68,48 @@ export async function initDocs() {
 
   if (state.source === 'custom') {
     const custom = getCustomContext();
-    console.log('\u{1F4C4} Usando contexto PERSONALIZADO do painel (nao Google Docs)');
+    console.log('[Docs] Usando contexto PERSONALIZADO do painel (nao Google Docs)');
     cachedPrompt = custom;
     cachedFAQ = '';
-    if (custom) console.log('   Conteudo: ' + custom.length + ' chars');
-    else console.log('   Contexto customizado vazio - fallback');
+    if (custom) console.log('[Docs] Conteudo: ' + custom.length + ' chars');
+    else console.log('[Docs] Contexto customizado vazio - fallback');
     return;
   }
 
   if (state.source === 'none') {
-    console.log('\u2139\uFE0F Fonte de contexto definida como NENHUMA (apenas prompt base)');
+    console.log('[Docs] Fonte de contexto definida como NENHUMA (apenas prompt base)');
     cachedPrompt = null;
     cachedFAQ = '';
     return;
   }
 
-  console.log('\u{1F4C4} Buscando documento comercial (FAQ) no Google Docs...');
+  console.log('[Docs] Buscando documento comercial (FAQ) no Google Docs...');
   cachedPrompt = await fetchGoogleDoc(PROMPT_URL);
   if (cachedPrompt) {
     const cssJunk = (cachedPrompt.match(/lst-kix|\.c\d\{|font-family/g) || []).length;
-    console.log('\u2705 Documento carregado (' + cachedPrompt.length + ' chars, CSS residuals: ' + cssJunk + ')');
+    console.log('[Docs] Documento carregado (' + cachedPrompt.length + ' chars)');
     if (cssJunk > 10) {
-      console.log('\u26A0\uFE0F Muito CSS detectado - limpando...');
+      console.log('[Docs] Limpando CSS residual...');
       cachedPrompt = cachedPrompt.split('\n')
         .filter(l => !/\{[^}]*:[^}]*\}/.test(l) && !/^\.|^#|^@import|^[a-z-]+\{/i.test(l))
         .join('\n');
-      console.log('\u2705 Limpo: ' + cachedPrompt.length + ' chars');
+      console.log('[Docs] Limpo: ' + cachedPrompt.length + ' chars');
     }
-    console.log('   Preview: ' + cachedPrompt.slice(0, 150) + '...');
   } else {
-    console.log('\u26A0\uFE0F Usando prompt padrao (fallback)');
+    console.log('[Docs] Usando prompt padrao (fallback)');
   }
 
-  console.log('\u{1F4C4} Buscando FAQ complementar no Google Docs...');
+  console.log('[Docs] Buscando FAQ complementar no Google Docs...');
   try {
     const faqText = await fetchGoogleDoc(FAQ_PUB_URL);
     if (faqText && faqText.length > 100) {
       cachedFAQ = faqText;
-      console.log('\u2705 FAQ carregado (' + cachedFAQ.length + ' chars)');
+      console.log('[Docs] FAQ carregado (' + cachedFAQ.length + ' chars)');
     } else {
       throw new Error('vazio');
     }
   } catch (err) {
-    console.log('\u2139\uFE0F FAQ complementar nao publicado (opcional)');
+    console.log('[Docs] FAQ complementar nao publicado (opcional)');
     cachedFAQ = '';
   }
 }
@@ -126,7 +124,7 @@ export async function reloadContext() {
 }
 
 /**
- * Prompt padrão (fallback caso o Google Docs não carregue)
+ * Prompt padrão
  */
 const DEFAULT_PROMPT = `Você é o Vendedor IA1 da CWB Fight Club, uma academia de Muay Thai em Curitiba.
 
@@ -139,7 +137,7 @@ REGRAS:
 - Marque o lead como qualificado após coletar as informações mínimas
 - Nunca invente informações - se não souber, pergunte ao lead
 
-TOOLS DISPONÍVEIS:
+FERRAMENTAS DISPONÍVEIS:
 1. Transferir para atendimento humano (lead irritado/agressivo/pedir gerente)
 2. Qualificar lead (após coletar nome, modalidade, objetivo, experiência)
 3. Preencher campos do lead no CRM

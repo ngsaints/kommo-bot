@@ -14,9 +14,9 @@ initLogger();
 
 // Busca documentos do Google Docs (prompt + FAQ) em paralelo
 initDocs().then(() => {
-  console.log('📄 Documentos carregados');
+  console.log('[Docs] Documentos carregados');
 }).catch(err => {
-  console.error('⚠️ Erro ao carregar documentos:', err.message);
+  console.error('[Docs] Erro ao carregar documentos:', err.message);
 });
 
 // Middleware - IMPORTANTE: extended=false para manter chaves planas (Kommo envia message[add][0][entity_id])
@@ -35,10 +35,10 @@ app.use('/home/workflows', dashboardRouter);
 app.get('/home', (req, res) => res.redirect('/home/workflows'));
 
 app.listen(PORT, () => {
-  console.log(`🤖 Kommo Bot rodando na porta ${PORT}`);
-  console.log(`📡 Webhook: POST /webhook/cwbfightclub`);
-  console.log(`📊 Dashboard: https://162-243-173-155.nip.io/home/workflows`);
-  console.log(`   Usuário: ${process.env.DASHBOARD_USER || 'admin'}`);
-  console.log(`   Senha: (definida em DASHBOARD_PASSWORD)`);
-  console.log(`❤️  Health: GET /health`);
+  console.log(`[Server] Kommo Bot rodando na porta ${PORT}`);
+  console.log(`[Server] Webhook: POST /webhook/cwbfightclub`);
+  console.log(`[Server] Dashboard: https://162-243-173-155.nip.io/home/workflows`);
+  console.log(`[Server] Usuario: ${process.env.DASHBOARD_USER || 'admin'}`);
+  console.log(`[Server] Senha: (definida em DASHBOARD_PASSWORD)`);
+  console.log(`[Server] Health: GET /health`);
 });

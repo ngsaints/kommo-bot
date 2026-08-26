@@ -90,37 +90,79 @@ export async function updateLead(leadId, updates) {
   return data;
 }
 
+export async function updateLeadStage(leadId, pipelineId, statusId) {
+  const payload = { id: Number(leadId) };
+  if (statusId) payload.status_id = Number(statusId);
+  if (pipelineId && pipelineId !== 'all') payload.pipeline_id = Number(pipelineId);
+  const { data } = await api.patch(`/leads`, [payload]);
+  return data;
+}
+
 export async function addTag(leadId, tagName) {
+  if (!tagName) return;
   const { data } = await api.patch(`/leads`, [{
     id: Number(leadId),
-    custom_fields_values: [{
-      field_code: 'TAG',
-      values: [{ value: tagName }]
-    }]
+    _embedded: {
+      tags: [{ name: tagName }]
+    }
   }]);
   return data;
 }
 
+export async function removeTag(leadId, tagName) {
+  if (!tagName) return;
+  try {
+    const lead = await getLead(leadId);
+    const existingTags = lead._embedded?.tags || [];
+    const remainingTags = existingTags.filter(t => t.name !== tagName).map(t => ({ id: t.id, name: t.name }));
+    const { data } = await api.patch(`/leads`, [{
+      id: Number(leadId),
+      _embedded: {
+        tags: remainingTags
+      }
+    }]);
+    return data;
+  } catch (err) {
+    console.error(`Erro ao remover tag ${tagName} do lead ${leadId}:`, err.message);
+  }
+}
+
+export async function addLeadNote(leadId, text) {
+  try {
+    const { data } = await api.post(`/leads/${leadId}/notes`, [{
+      note_type: 'common',
+      params: { text }
+    }]);
+    return data;
+  } catch (err) {
+    console.error(`Erro ao adicionar nota ao lead ${leadId}:`, err.message);
+  }
+}
+
 export async function getPipelines() {
-  const { data } = await api.get('/leads/pipelines');
-  return data;
+  try {
+    const { data } = await api.get('/leads/pipelines');
+    return data._embedded?.pipelines || [];
+  } catch (err) {
+    console.error('Erro ao buscar pipelines:', err.message);
+    return [];
+  }
 }
 
 export async function getCustomFields() {
-  const { data } = await api.get('/leads/custom_fields');
-  return data;
+  try {
+    const { data } = await api.get('/leads/custom_fields');
+    return data._embedded?.custom_fields || [];
+  } catch (err) {
+    console.error('Erro ao buscar custom fields:', err.message);
+    return [];
+  }
 }
 
-// uazapi - envio de WhatsApp (mesma API usada no fluxo n8n)
-const UAZAPI_URL = 'https://agentekommo.uazapi.com/send/text';
-const UAZAPI_TOKEN = '6033f312-3e6f-4142-ae49-e594520ca33a';
+// uazapi - envio de WhatsApp
+const UAZAPI_URL = process.env.UAZAPI_URL || 'https://agentekommo.uazapi.com/send/text';
+const UAZAPI_TOKEN = process.env.UAZAPI_TOKEN || '6033f312-3e6f-4142-ae49-e594520ca33a';
 
-/**
- * Extrai o telefone do contato embutido na resposta do lead
- */
-/**
- * Envia mensagem WhatsApp via uazapi (igual ao node ENVIA MENSAGEM WHATSAPP do n8n)
- */
 export async function sendWhatsApp(number, text) {
   const { data } = await axios.post(UAZAPI_URL, 
     { number, text },
@@ -136,4 +178,16 @@ export async function sendWhatsApp(number, text) {
   return data;
 }
 
-export default { getLead, getContact, resolvePhone, updateLead, addTag, getPipelines, getCustomFields, sendWhatsApp };
+export default {
+  getLead,
+  getContact,
+  resolvePhone,
+  updateLead,
+  updateLeadStage,
+  addTag,
+  removeTag,
+  addLeadNote,
+  getPipelines,
+  getCustomFields,
+  sendWhatsApp
+};

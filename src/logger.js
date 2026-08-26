@@ -18,7 +18,7 @@ export function initLogger() {
     }
   } catch {}
   
-  console.log(`📝 Logger iniciado: ${executions.length} execuções, ${logs.length} logs`);
+  console.log(`Logger iniciado: ${executions.length} execucoes, ${logs.length} logs`);
 }
 
 export function addExecution(data) {
@@ -40,7 +40,7 @@ export function addExecution(data) {
 
 export function addLog(icon, type, text) {
   const entry = {
-    icon,
+    icon: icon || 'info',
     type: type || 'info',
     text,
     time: new Date().toLocaleString('pt-BR'),

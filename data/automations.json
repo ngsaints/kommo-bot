@@ -1,0 +1,77 @@
+[
+  {
+    "id": "aut-default-ia",
+    "name": "Atendimento Inteligente com IA",
+    "description": "Responde automaticamente leads que enviarem mensagens pelo WhatsApp utilizando a base de conhecimento e IA.",
+    "active": true,
+    "trigger": "message_add",
+    "conditions": {
+      "pipelineId": "all",
+      "stageId": "all",
+      "requiredTags": [],
+      "excludedTags": [
+        "Atendimento Humano",
+        "Nao Perturbe",
+        "Sem IA"
+      ],
+      "messageTypes": [
+        "text",
+        "audio",
+        "image"
+      ],
+      "keywordMatch": ""
+    },
+    "actions": [
+      {
+        "type": "ai_chat",
+        "useCustomPrompt": false,
+        "customPrompt": "",
+        "sendChannel": "whatsapp_uazapi",
+        "addTagOnSuccess": "Em Atendimento IA",
+        "removeTagOnSuccess": ""
+      }
+    ],
+    "stats": {
+      "executionsCount": 0,
+      "successCount": 0,
+      "lastRun": null
+    },
+    "createdAt": "2026-08-26T21:18:11.922Z",
+    "updatedAt": "2026-08-26T21:18:11.931Z"
+  },
+  {
+    "id": "aut-transfer-human",
+    "name": "Transbordo para Atendimento Humano",
+    "description": "Identifica quando um lead solicita atendente humano ou manifesta insatisfação e atualiza as tags no CRM.",
+    "active": true,
+    "trigger": "message_add",
+    "conditions": {
+      "pipelineId": "all",
+      "stageId": "all",
+      "requiredTags": [],
+      "excludedTags": [
+        "Atendimento Humano"
+      ],
+      "messageTypes": [
+        "text"
+      ],
+      "keywordMatch": "humano,atendente,gerente,falar com pessoa,responsavel,reclamacao,suporte humano"
+    },
+    "actions": [
+      {
+        "type": "send_template",
+        "templateText": "Entendido! Estou transferindo seu atendimento para um de nossos atendentes humanos. Em instantes entraremos em contato!",
+        "sendChannel": "whatsapp_uazapi",
+        "addTagOnSuccess": "Atendimento Humano",
+        "removeTagOnSuccess": "Em Atendimento IA"
+      }
+    ],
+    "stats": {
+      "executionsCount": 0,
+      "successCount": 0,
+      "lastRun": null
+    },
+    "createdAt": "2026-08-26T21:18:11.932Z",
+    "updatedAt": "2026-08-26T21:18:11.932Z"
+  }
+]
