@@ -1,0 +1,21 @@
+services:
+  kommo-bot:
+    build: .
+    container_name: kommo-bot
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - n8n_net
+      - evolution_net
+
+networks:
+  n8n_net:
+    external: true
+    name: n8n_default
+  evolution_net:
+    external: true
+    name: evolution_default
