@@ -334,6 +334,7 @@ router.get('/', requireAuth, (req, res) => {
     .badge-trigger { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
     .badge-action { background: var(--primary-soft); color: var(--primary); border: 1px solid var(--primary-border); }
     .badge-condition { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
+    .badge-scope { background: #ecfdf5; color: #166534; border: 1px solid #bbf7d0; }
 
     .auto-card-stats {
       background: #f8fafc; border-radius: 10px; padding: 12px; display: flex;
@@ -392,6 +393,18 @@ router.get('/', requireAuth, (req, res) => {
       display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
     }
     .flow-step-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .protected-scope {
+      display: none; align-items: flex-start; gap: 12px; margin-top: 14px; padding: 13px 14px;
+      border: 1px solid var(--primary-border); border-radius: 10px; background: var(--primary-soft);
+    }
+    .protected-scope.visible { display: flex; }
+    .protected-scope-icon {
+      width: 30px; height: 30px; flex: 0 0 30px; border-radius: 8px; color: var(--primary);
+      background: #fff; border: 1px solid var(--primary-border); display: inline-flex;
+      align-items: center; justify-content: center;
+    }
+    .protected-scope strong { display: block; font-size: 12px; color: var(--navy); margin-bottom: 3px; }
+    .protected-scope p { font-size: 11px; line-height: 1.45; color: #475569; }
     
     .visual-options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
     .visual-choice-card {
@@ -1073,6 +1086,14 @@ router.get('/', requireAuth, (req, res) => {
               </select>
               <span style="display:block;font-size:10px;color:var(--text-muted);margin-top:4px;">Mesmo que a tag continue no contato, a IA não responde ao alcançar esta etapa.</span>
             </div>
+            <input type="hidden" id="autoAllowedStageNames" value="">
+            <div class="protected-scope" id="protectedScopeNotice">
+              <span class="protected-scope-icon"><i class="fas fa-shield-halved"></i></span>
+              <div>
+                <strong>Escopo protegido da Maria</strong>
+                <p id="protectedScopeText"></p>
+              </div>
+            </div>
           </div>
 
           <!-- PASSO 3: AÇÃO PRINCIPAL -->
@@ -1286,6 +1307,7 @@ router.get('/', requireAuth, (req, res) => {
       const requiredTags = document.getElementById('autoRequiredTags').value.trim();
       const blockedTags = document.getElementById('autoExcludedTags').value.trim();
       const stopAtStage = document.getElementById('autoStopAtStage').value;
+      const allowedStages = document.getElementById('autoAllowedStageNames').value.trim();
       const allowAll = document.getElementById('autoAllowAll').checked;
       const parts = [];
       if (pipeline && pipeline.value !== 'all') parts.push(pipeline.options[pipeline.selectedIndex]?.text || 'Funil específico');
@@ -1293,9 +1315,25 @@ router.get('/', requireAuth, (req, res) => {
       if (requiredTags) parts.push('Exige: ' + requiredTags);
       if (keywords) parts.push('Palavras: ' + keywords);
       if (blockedTags) parts.push('Bloqueia: ' + blockedTags);
+      if (allowedStages) parts.push('Somente: ' + allowedStages);
       if (stopAtStage) parts.push('Desliga em: ' + stopAtStage);
       if (allowAll) parts.push('Escopo global confirmado');
       return parts.length ? parts.join(' · ') : 'Bloqueada — defina uma coluna, tag ou palavra-chave';
+    }
+
+    function setProtectedStageScope(stageNames = []) {
+      const normalized = Array.isArray(stageNames) ? stageNames.filter(Boolean) : [];
+      document.getElementById('autoAllowedStageNames').value = normalized.join(' | ');
+      const notice = document.getElementById('protectedScopeNotice');
+      const text = document.getElementById('protectedScopeText');
+      if (normalized.length > 0) {
+        text.textContent = 'A automação atua somente em ' + normalized.join(' e ') + '. Lead e qualquer outra etapa ficam bloqueados, mesmo que a tag permaneça no contato.';
+        notice.classList.add('visible');
+      } else {
+        text.textContent = '';
+        notice.classList.remove('visible');
+      }
+      renderAutomationCanvas();
     }
 
     function focusBuilderSection(sectionId, nodeKind) {
@@ -1353,6 +1391,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoStopAfterMatch').checked = true;
         document.getElementById('autoAllowAll').checked = false;
         ensureStopStageOption('Lead');
+        setProtectedStageScope(['Contato Inicial', 'Primeiro Contato (Prioridade)']);
       } else if (preset === 'qualification') {
         document.getElementById('autoName').value = 'Qualificação automática de novos leads';
         document.getElementById('autoDesc').value = 'Organiza novos contatos no CRM para acelerar o primeiro atendimento.';
@@ -1367,6 +1406,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoStopAfterMatch').checked = false;
         document.getElementById('autoAllowAll').checked = false;
         ensureStopStageOption('Lead');
+        setProtectedStageScope(['Contato Inicial', 'Primeiro Contato (Prioridade)']);
       } else {
         document.getElementById('autoName').value = 'Atendimento inteligente com IA';
         document.getElementById('autoDesc').value = 'Responde automaticamente mensagens usando a base de conhecimento da empresa.';
@@ -1381,6 +1421,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoStopAfterMatch').checked = false;
         document.getElementById('autoAllowAll').checked = false;
         ensureStopStageOption('Lead');
+        setProtectedStageScope(['Contato Inicial', 'Primeiro Contato (Prioridade)']);
       }
       renderAutomationCanvas();
     }
@@ -1466,6 +1507,7 @@ router.get('/', requireAuth, (req, res) => {
                 <span class="badge badge-action"><i class="fas fa-robot"></i> \${actionLabel}</span>
                 \${String(a.conditions?.pipelineId || '').startsWith('name:') ? '<span class="badge badge-condition"><i class="fas fa-filter"></i> ' + escapeHtml(String(a.conditions.pipelineId).slice(5)) + '</span>' : ''}
                 \${a.conditions?.requiredTags?.length ? '<span class="badge badge-condition"><i class="fas fa-tag"></i> Tag ' + escapeHtml(a.conditions.requiredTags.join(', ')) + '</span>' : ''}
+                \${a.conditions?.allowedStageNames?.length ? '<span class="badge badge-scope"><i class="fas fa-shield-halved"></i> Somente ' + escapeHtml(a.conditions.allowedStageNames.join(' + ')) + '</span>' : ''}
                 \${a.conditions?.stopAtStageName ? '<span class="badge badge-condition"><i class="fas fa-stop-circle"></i> Para em ' + escapeHtml(a.conditions.stopAtStageName) + '</span>' : ''}
                 \${a.conditions?.keywordMatch ? '<span class="badge badge-condition"><i class="fas fa-key"></i> Palavras-chave</span>' : ''}
               </div>
@@ -1557,6 +1599,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoStopAfterMatch').checked = false;
       document.getElementById('autoAllowAll').checked = false;
       ensureStopStageOption('Lead');
+      setProtectedStageScope([]);
       document.getElementById('autoModal').style.display = 'flex';
       renderAutomationCanvas();
     }
@@ -1588,6 +1631,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoStopAfterMatch').checked = a.stopAfterMatch === true;
       document.getElementById('autoAllowAll').checked = a.conditions?.allowAllLeads === true;
       ensureStopStageOption(a.conditions?.stopAtStageName || '');
+      setProtectedStageScope(a.conditions?.allowedStageNames || []);
       document.getElementById('autoModal').style.display = 'flex';
       renderAutomationCanvas();
     }
@@ -1625,6 +1669,8 @@ router.get('/', requireAuth, (req, res) => {
         requiredTags: document.getElementById('autoRequiredTags').value.split(',').map(s => s.trim()).filter(Boolean),
         excludedTags: document.getElementById('autoExcludedTags').value.split(',').map(s => s.trim()).filter(Boolean),
         keywordMatch: document.getElementById('autoKeywords').value.trim(),
+        allowedStageNames: document.getElementById('autoAllowedStageNames').value
+          .split('|').map(s => s.trim()).filter(Boolean),
         stopAtStageName: document.getElementById('autoStopAtStage').value,
         allowAllLeads: document.getElementById('autoAllowAll').checked,
       };

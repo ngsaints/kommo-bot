@@ -132,6 +132,7 @@ test('automação principal exige tag no Funil de vendas e desliga a partir de L
       requiredTags: ['Contato Inicial'],
       excludedTags: [],
       messageTypes: ['text'],
+      allowedStageNames: ['Contato Inicial', 'Primeiro Contato (Prioridade)'],
       stopAtStageName: 'Lead',
     },
   };
@@ -153,4 +154,57 @@ test('automação principal exige tag no Funil de vendas e desliga a partir de L
     ...inStage(10),
     pipeline: { id: 2, name: 'Outro Funil', _embedded: { statuses: stages } },
   }), false);
+});
+
+test('lista explícita permite somente Contato Inicial e Primeiro Contato', () => {
+  const automation = {
+    conditions: {
+      pipelineId: 'name:Funil de vendas',
+      stageId: 'all',
+      requiredTags: ['Contato Inicial'],
+      excludedTags: [],
+      messageTypes: ['text'],
+      allowedStageNames: ['Contato Inicial', 'Primeiro Contato (Prioridade)'],
+      stopAtStageName: 'Lead',
+    },
+  };
+  const statuses = [
+    { id: 10, name: 'Contato Inicial', sort: 10 },
+    { id: 20, name: 'Primeiro Contato (Prioridade)', sort: 20 },
+    // Uma coluna inesperada antes de Lead também deve ficar bloqueada.
+    { id: 25, name: 'Triagem Manual', sort: 25 },
+    { id: 30, name: 'Lead', sort: 30 },
+    { id: 40, name: 'Experimental Agendado', sort: 40 },
+  ];
+  const inStage = statusId => contextWithTags(['Contato Inicial'], {
+    lead: {
+      pipeline_id: 1,
+      status_id: statusId,
+      _embedded: { tags: [{ name: 'Contato Inicial' }] },
+    },
+    pipeline: { id: 1, name: 'Funil de vendas', _embedded: { statuses } },
+  });
+
+  assert.equal(evaluateConditions(automation, inStage(10)), true);
+  assert.equal(evaluateConditions(automation, inStage(20)), true);
+  assert.equal(evaluateConditions(automation, inStage(25)), false);
+  assert.equal(evaluateConditions(automation, inStage(30)), false);
+  assert.equal(evaluateConditions(automation, inStage(40)), false);
+});
+
+test('lista explícita de etapas falha fechada sem etapa atual no pipeline', () => {
+  const automation = {
+    conditions: {
+      ...initialContactAutomation.conditions,
+      allowedStageNames: ['Contato Inicial', 'Primeiro Contato (Prioridade)'],
+    },
+  };
+  const pipeline = {
+    _embedded: { statuses: [{ id: 10, name: 'Contato Inicial', sort: 10 }] },
+  };
+
+  assert.equal(evaluateConditions(automation, contextWithTags(['Contato Inicial'], {
+    pipeline,
+    lead: { status_id: 999, _embedded: { tags: [{ name: 'Contato Inicial' }] } },
+  })), false);
 });

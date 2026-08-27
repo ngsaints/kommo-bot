@@ -6,6 +6,10 @@ import { fileURLToPath } from 'url';
 const __dir = path.dirname(fileURLToPath(import.meta.url));
 const DATA_DIR = path.join(__dir, '..', 'data');
 const AUTOMATIONS_FILE = path.join(DATA_DIR, 'automations.json');
+const INITIAL_CONTACT_ALLOWED_STAGES = [
+  'Contato Inicial',
+  'Primeiro Contato (Prioridade)',
+];
 
 // Garante existência da pasta de dados
 if (!fs.existsSync(DATA_DIR)) {
@@ -37,6 +41,9 @@ export function migrateAutomationSafety(automations) {
           ? automation.conditions.pipelineId
           : 'name:Funil de vendas',
         requiredTags: hasInitialContact ? requiredTags : [...requiredTags, 'Contato Inicial'],
+        // Escopo explícito: não depende somente da ordem configurada no Kommo.
+        // A migração reaplica a proteção mesmo após uma edição pelo painel.
+        allowedStageNames: INITIAL_CONTACT_ALLOWED_STAGES,
         stopAtStageName: automation.conditions?.stopAtStageName || 'Lead',
         allowAllLeads: false,
       },
@@ -113,6 +120,9 @@ export function saveAutomation(data) {
       excludedTags: Array.isArray(data.conditions?.excludedTags) ? data.conditions.excludedTags : [],
       messageTypes: Array.isArray(data.conditions?.messageTypes) ? data.conditions.messageTypes : ['text', 'audio', 'image'],
       keywordMatch: data.conditions?.keywordMatch || '',
+      allowedStageNames: Array.isArray(data.conditions?.allowedStageNames)
+        ? data.conditions.allowedStageNames
+        : [],
       stopAtStageName: data.conditions?.stopAtStageName || '',
       allowAllLeads: data.conditions?.allowAllLeads === true,
     },

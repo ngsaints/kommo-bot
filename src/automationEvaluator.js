@@ -53,6 +53,16 @@ export function evaluateConditions(automation, context) {
     if (!lead?.status_id || Number(lead.status_id) !== Number(conds.stageId)) return false;
   }
 
+  // Para fluxos sensíveis, a lista de etapas permitidas é mais segura que
+  // depender apenas da posição da etapa no funil. O nome atual sempre vem do
+  // próprio pipeline retornado pelo Kommo e a ausência desse contexto bloqueia.
+  if (Array.isArray(conds.allowedStageNames) && conds.allowedStageNames.length > 0) {
+    const statuses = pipeline?._embedded?.statuses || [];
+    const current = statuses.find(status => Number(status.id) === Number(lead?.status_id));
+    const allowed = conds.allowedStageNames.map(normalizeKommoValue).filter(Boolean);
+    if (!current || !allowed.includes(normalizeKommoValue(current.name))) return false;
+  }
+
   // Impede que uma automação de primeiro contato continue atendendo depois
   // que a oportunidade avançou no funil. Se a ordem não puder ser confirmada,
   // bloqueia a execução por segurança.

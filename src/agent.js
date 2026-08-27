@@ -2,9 +2,14 @@ import OpenAI from 'openai';
 import axios from 'axios';
 import { readContextState, getCustomContext } from './promptStore.js';
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
+let openai = null;
+
+function getOpenAIClient() {
+  if (!openai) {
+    openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+  }
+  return openai;
+}
 
 // URLs dos Google Docs do fluxo n8n
 const PROMPT_URL = 'https://docs.google.com/document/d/e/2PACX-1vSw76wcRiM_sVv5v3TMMluiTjGk17oLWaKc1VXpbJkgc2TlreFxfrsFUFlkO7VJcpBKerZV81D-7cLn/pub';
@@ -178,7 +183,7 @@ export async function getAiResponse(message, history, lead = {}, customPrompt = 
   ];
 
   try {
-    const completion = await openai.chat.completions.create({
+    const completion = await getOpenAIClient().chat.completions.create({
       model: process.env.OPENAI_MODEL || 'gpt-4o-mini',
       messages,
       temperature: 0.7,

@@ -12,11 +12,19 @@ test('migra regras persistidas para tag Contato Inicial no Funil de vendas', () 
   assert.equal(migrated[0].conditions.pipelineId, 'name:Funil de vendas');
   assert.equal(migrated[0].priority, 10);
   assert.equal(migrated[0].stopAfterMatch, false);
+  assert.deepEqual(migrated[0].conditions.allowedStageNames, [
+    'Contato Inicial',
+    'Primeiro Contato (Prioridade)',
+  ]);
   assert.equal(migrated[0].conditions.stopAtStageName, 'Lead');
   assert.deepEqual(migrated[1].conditions.requiredTags, ['Contato Inicial']);
   assert.equal(migrated[1].conditions.pipelineId, 'name:Funil de vendas');
   assert.equal(migrated[1].priority, 100);
   assert.equal(migrated[1].stopAfterMatch, true);
+  assert.deepEqual(migrated[1].conditions.allowedStageNames, [
+    'Contato Inicial',
+    'Primeiro Contato (Prioridade)',
+  ]);
   assert.equal(migrated[1].conditions.stopAtStageName, 'Lead');
 });
 

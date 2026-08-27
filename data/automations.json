@@ -24,6 +24,10 @@
         "image"
       ],
       "keywordMatch": "",
+      "allowedStageNames": [
+        "Contato Inicial",
+        "Primeiro Contato (Prioridade)"
+      ],
       "stopAtStageName": "Lead",
       "allowAllLeads": false
     },
@@ -66,6 +70,10 @@
         "text"
       ],
       "keywordMatch": "humano,atendente,gerente,falar com pessoa,responsavel,reclamacao,suporte humano",
+      "allowedStageNames": [
+        "Contato Inicial",
+        "Primeiro Contato (Prioridade)"
+      ],
       "stopAtStageName": "Lead",
       "allowAllLeads": false
     },
