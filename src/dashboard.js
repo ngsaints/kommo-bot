@@ -15,6 +15,7 @@ import {
   deleteAutomation
 } from './automationsStore.js';
 import { hasExplicitAutomationScope } from './automationEvaluator.js';
+import { readAutomationState, writeAutomationState } from './automationStateStore.js';
 
 export { readAutomationState };
 
@@ -68,9 +69,9 @@ router.get('/login', (req, res) => {
     .login-container { width: 100%; max-width: 420px; }
     .brand-header { text-align: center; margin-bottom: 28px; }
     .brand-icon {
-      width: 48px; height: 48px; background: #2563eb; color: #ffffff;
+      width: 48px; height: 48px; background: #1f5f63; color: #ffffff;
       border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
-      font-size: 22px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      font-size: 22px; margin-bottom: 12px; box-shadow: 0 3px 10px rgba(31, 95, 99, 0.18);
     }
     .brand-header h1 { font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
     .brand-header p { font-size: 14px; color: #64748b; margin-top: 4px; }
@@ -87,13 +88,13 @@ router.get('/login', (req, res) => {
       width: 100%; padding: 12px 14px 12px 40px; border: 1px solid #cbd5e1;
       border-radius: 10px; font-size: 14px; color: #0f172a; background: #ffffff; outline: none; transition: all 0.2s ease;
     }
-    .input-wrapper input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
+    .input-wrapper input:focus { border-color: #1f5f63; box-shadow: 0 0 0 3px rgba(31,95,99,.12); }
     .btn-primary {
-      width: 100%; padding: 12px 16px; background: #2563eb; color: #ffffff; border: none;
+      width: 100%; padding: 12px 16px; background: #1f5f63; color: #ffffff; border: none;
       border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex;
       align-items: center; justify-content: center; gap: 8px; transition: background 0.2s ease;
     }
-    .btn-primary:hover { background: #1d4ed8; }
+    .btn-primary:hover { background: #16484b; }
     .error-alert {
       background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 12px 14px;
       border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: none; align-items: center; gap: 8px;
@@ -195,28 +196,34 @@ router.get('/', requireAuth, (req, res) => {
   <meta name="viewport" content="width=device-width,initial-scale=1.0">
   <title>Painel de Automações & Funis - Kommo Bot</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #2563eb;
-      --primary-hover: #1d4ed8;
-      --bg: #f8fafc;
+      --primary: #1f5f63;
+      --primary-hover: #16484b;
+      --primary-soft: #edf4f3;
+      --primary-border: #d4e3e1;
+      --navy: #172033;
+      --bg: #f4f6f8;
       --card-bg: #ffffff;
       --border: #e2e8f0;
-      --text-main: #0f172a;
+      --text-main: #172033;
       --text-muted: #64748b;
       --success: #16a34a;
       --danger: #dc2626;
       --warning: #d97706;
-      --radius: 14px;
+      --radius: 12px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; }
     body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; overflow-x: hidden; }
     
     /* Top Header */
     .top-header {
       background: var(--card-bg);
       border-bottom: 1px solid var(--border);
-      height: 68px;
+      height: 64px;
       padding: 0 32px;
       display: flex;
       align-items: center;
@@ -227,18 +234,19 @@ router.get('/', requireAuth, (req, res) => {
     }
     .header-brand { display: flex; align-items: center; gap: 12px; }
     .brand-icon {
-      width: 38px; height: 38px; background: var(--primary); color: #fff;
-      border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
+      width: 36px; height: 36px; background: var(--primary); color: #fff;
+      border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 16px;
+      box-shadow: 0 1px 2px rgba(15,23,42,.12);
     }
     .brand-title h1 { font-size: 17px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
     .brand-title span { font-size: 12px; color: var(--text-muted); }
     .header-actions { display: flex; align-items: center; gap: 16px; }
     .status-indicator {
       display: inline-flex; align-items: center; gap: 6px;
-      padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
-      background: #f0fdf4; color: var(--success); border: 1px solid #bbf7d0;
+      padding: 6px 10px; border-radius: 8px; font-size: 11px; font-weight: 600;
+      background: #f8fafc; color: #475569; border: 1px solid var(--border);
     }
-    .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--primary); }
     .btn-logout {
       color: var(--text-muted); text-decoration: none; font-size: 13px; font-weight: 500;
       padding: 8px 14px; border-radius: 8px; border: 1px solid var(--border);
@@ -248,10 +256,10 @@ router.get('/', requireAuth, (req, res) => {
 
     /* Navigation Bar / Tabs */
     .tab-nav-wrapper { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 32px; }
-    .tab-nav { max-width: 1300px; margin: 0 auto; display: flex; gap: 24px; }
+    .tab-nav { max-width: 1300px; margin: 0 auto; display: flex; gap: 22px; overflow-x: auto; }
     .tab-btn {
       padding: 16px 4px; background: none; border: none; border-bottom: 2px solid transparent;
-      font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+      font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer; white-space: nowrap;
       display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
     }
     .tab-btn:hover { color: var(--text-main); }
@@ -265,15 +273,15 @@ router.get('/', requireAuth, (req, res) => {
     /* Global Automation Switch */
     .master-switch-bar {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      padding: 14px 18px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;
+      box-shadow: 0 1px 2px rgba(15,23,42,.035);
     }
     .switch-left { display: flex; align-items: center; gap: 14px; }
     .switch-icon {
       width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center;
       justify-content: center; font-size: 18px;
     }
-    .switch-icon.active { background: #f0fdf4; color: var(--success); }
+    .switch-icon.active { background: var(--primary-soft); color: var(--primary); }
     .switch-icon.inactive { background: #fef2f2; color: var(--danger); }
     .switch-text h3 { font-size: 15px; font-weight: 600; color: var(--text-main); }
     .switch-text p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
@@ -289,8 +297,9 @@ router.get('/', requireAuth, (req, res) => {
       position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px;
       background-color: white; transition: 0.3s; border-radius: 50%;
     }
-    input:checked + .slider { background-color: var(--success); }
+    input:checked + .slider { background-color: var(--primary); }
     input:checked + .slider:before { transform: translateX(22px); }
+    .toggle input:disabled + .slider { opacity: .55; cursor: wait; }
 
     /* Action Toolbar */
     .section-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
@@ -300,19 +309,20 @@ router.get('/', requireAuth, (req, res) => {
       background: var(--primary); color: #fff; border: none; border-radius: 10px;
       padding: 11px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
       display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s ease, transform 0.1s ease;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .12);
     }
     .btn-create:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
     /* Automations Grid */
-    .automations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+    .automations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
     .auto-card {
       background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
-      padding: 22px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; flex-direction: column;
-      justify-content: space-between; transition: transform 0.15s ease, box-shadow 0.15s ease;
+      padding: 20px; box-shadow: 0 1px 2px rgba(15,23,42,.035); display: flex; flex-direction: column;
+      justify-content: space-between; transition: border-color 0.15s ease, box-shadow 0.15s ease;
     }
-    .auto-card:hover { box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.08); transform: translateY(-2px); }
+    .auto-card:hover { border-color: #cbd5e1; box-shadow: 0 5px 14px rgba(15, 23, 42, 0.055); }
     .auto-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
+    .auto-card-title { min-width: 0; flex: 1; }
     .auto-card-title h3 { font-size: 15px; font-weight: 700; color: var(--text-main); }
     .auto-card-title p { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
     
@@ -321,8 +331,8 @@ router.get('/', requireAuth, (req, res) => {
       display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px;
       font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em;
     }
-    .badge-trigger { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
-    .badge-action { background: #f5f3ff; color: #6d28d9; border: 1px solid #ede9fe; }
+    .badge-trigger { background: #f8fafc; color: #475569; border: 1px solid #e2e8f0; }
+    .badge-action { background: var(--primary-soft); color: var(--primary); border: 1px solid var(--primary-border); }
     .badge-condition { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
     .auto-card-stats {
@@ -373,12 +383,12 @@ router.get('/', requireAuth, (req, res) => {
 
     /* Visual Flow Step Cards inside Automation Builder Modal */
     .flow-step-card {
-      background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
+      background: #ffffff; border: 1px solid var(--border); border-radius: 12px;
       padding: 18px; margin-bottom: 18px;
     }
     .flow-step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
     .step-number {
-      width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff;
+      width: 26px; height: 26px; border-radius: 7px; background: var(--navy); color: #fff;
       display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
     }
     .flow-step-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
@@ -388,8 +398,8 @@ router.get('/', requireAuth, (req, res) => {
       background: #ffffff; border: 2px solid var(--border); border-radius: 10px;
       padding: 14px; cursor: pointer; transition: all 0.2s ease; text-align: left;
     }
-    .visual-choice-card:hover { border-color: #93c5fd; background: #eff6ff; }
-    .visual-choice-card.selected { border-color: var(--primary); background: #eff6ff; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
+    .visual-choice-card:hover { border-color: #9bbfbc; background: #f8fbfa; }
+    .visual-choice-card.selected { border-color: var(--primary); background: var(--primary-soft); box-shadow: 0 0 0 2px rgba(31,95,99,.10); }
     .visual-choice-icon { font-size: 20px; color: var(--primary); margin-bottom: 8px; }
     .visual-choice-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
     .visual-choice-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
@@ -397,79 +407,83 @@ router.get('/', requireAuth, (req, res) => {
     /* Easy visual automation canvas */
     .builder-quick-start {
       display: flex; align-items: center; justify-content: space-between; gap: 16px;
-      margin: 18px 0 12px; padding: 12px 14px; border: 1px solid #dbeafe;
-      background: #f8fbff; border-radius: 12px;
+      margin: 18px 0 12px; padding: 12px 14px; border: 1px solid var(--border);
+      background: #f8fafc; border-radius: 12px;
     }
-    .builder-quick-start strong { display: block; font-size: 12px; color: #1e3a5f; margin-bottom: 2px; }
+    .builder-quick-start strong { display: block; font-size: 12px; color: var(--navy); margin-bottom: 2px; }
     .builder-quick-start span { display: block; font-size: 11px; color: var(--text-muted); }
     .automation-presets { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
     .automation-preset {
       border: 1px solid #cbd5e1; background: #fff; color: #334155; border-radius: 8px;
       padding: 7px 10px; font-size: 11px; font-weight: 600; cursor: pointer; white-space: nowrap;
     }
-    .automation-preset:hover { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
+    .automation-preset:hover { border-color: var(--primary); color: var(--primary); background: var(--primary-soft); }
     .automation-builder {
-      display: grid; grid-template-columns: 220px minmax(0, 1fr); min-height: 410px;
-      border: 1px solid var(--border); border-radius: 14px; overflow: hidden; background: #f8fafc;
-      margin-bottom: 22px;
+      display: flex; flex-direction: column; border: 1px solid var(--border); border-radius: 14px;
+      overflow: hidden; background: #f8fafc; margin-bottom: 22px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, .03);
     }
-    .node-library { background: #fff; border-right: 1px solid var(--border); padding: 16px; }
+    .node-library {
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap; background: #fff;
+      border-bottom: 1px solid var(--border); padding: 12px 14px;
+    }
+    .node-library-intro { width: 165px; flex-shrink: 0; }
     .node-library-title { font-size: 12px; font-weight: 700; color: var(--text-main); margin-bottom: 3px; }
-    .node-library-help { font-size: 10px; color: var(--text-muted); line-height: 1.4; margin-bottom: 14px; }
-    .node-group { margin-top: 14px; }
+    .node-library-help { font-size: 10px; color: var(--text-muted); line-height: 1.35; }
+    .node-group { display: flex; align-items: center; gap: 6px; margin-left: auto; }
     .node-group-label {
-      font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: .1em;
-      font-weight: 700; margin-bottom: 7px;
+      font-size: 9px; color: #94a3b8; text-transform: uppercase; letter-spacing: .08em;
+      font-weight: 700; margin-right: 2px;
     }
     .palette-node {
-      width: 100%; display: flex; align-items: center; gap: 9px; padding: 10px;
+      width: auto; display: flex; align-items: center; gap: 7px; padding: 7px 9px;
       border: 1px solid var(--border); border-radius: 9px; background: #fff; cursor: grab;
-      margin-bottom: 7px; text-align: left; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
+      text-align: left; transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
-    .palette-node:hover { border-color: #93c5fd; box-shadow: 0 3px 10px rgba(15,23,42,.06); transform: translateY(-1px); }
+    .palette-node:hover { border-color: #9bbfbc; box-shadow: 0 2px 7px rgba(15,23,42,.05); transform: translateY(-1px); }
     .palette-node:active { cursor: grabbing; }
     .palette-node-icon {
-      width: 29px; height: 29px; border-radius: 7px; display: flex; align-items: center;
+      width: 27px; height: 27px; border-radius: 7px; display: flex; align-items: center;
       justify-content: center; flex-shrink: 0; font-size: 12px;
     }
-    .palette-node-icon.trigger { background: #eff6ff; color: #2563eb; }
-    .palette-node-icon.action { background: #f0fdf4; color: #15803d; }
-    .palette-node-copy strong { display: block; font-size: 11px; color: #334155; }
-    .palette-node-copy span { display: block; font-size: 9px; color: #94a3b8; margin-top: 1px; }
+    .palette-node-icon.trigger { background: #f1f5f9; color: #475569; }
+    .palette-node-icon.action { background: var(--primary-soft); color: var(--primary); }
+    .palette-node-copy strong { display: block; font-size: 10px; color: #334155; white-space: nowrap; }
+    .palette-node-copy span { display: none; }
     .workflow-canvas {
-      position: relative; padding: 22px 26px; overflow: auto;
+      position: relative; padding: 18px 22px 24px; overflow: auto;
       background-color: #f8fafc;
       background-image: radial-gradient(#dbe3ec 1px, transparent 1px);
-      background-size: 18px 18px;
+      background-size: 20px 20px;
     }
-    .workflow-canvas.drag-over { background-color: #eff6ff; box-shadow: inset 0 0 0 2px #60a5fa; }
-    .canvas-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px; }
+    .workflow-canvas.drag-over { background-color: var(--primary-soft); box-shadow: inset 0 0 0 2px #7da9a6; }
+    .canvas-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .canvas-header strong { font-size: 12px; color: #334155; }
     .canvas-header span { font-size: 10px; color: #94a3b8; }
-    .workflow-flow { max-width: 560px; margin: 0 auto; }
+    .workflow-flow { display: flex; align-items: stretch; max-width: 920px; margin: 0 auto; }
     .workflow-node {
-      position: relative; display: flex; align-items: center; gap: 13px; width: 100%;
-      padding: 15px 16px; border: 1px solid #cbd5e1; background: #fff; border-radius: 12px;
+      position: relative; display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0;
+      padding: 14px; border: 1px solid #cbd5e1; background: #fff; border-radius: 12px;
       box-shadow: 0 3px 10px rgba(15,23,42,.055); cursor: pointer; text-align: left;
       transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
-    .workflow-node:hover, .workflow-node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,.1); transform: translateY(-1px); }
+    .workflow-node:hover, .workflow-node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(31,95,99,.09); transform: translateY(-1px); }
     .workflow-node-kind {
       width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
       justify-content: center; flex-shrink: 0; font-size: 15px;
     }
-    .workflow-node.trigger .workflow-node-kind { background: #eff6ff; color: #2563eb; }
+    .workflow-node.trigger .workflow-node-kind { background: #f1f5f9; color: #475569; }
     .workflow-node.condition .workflow-node-kind { background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; }
-    .workflow-node.action .workflow-node-kind { background: #f0fdf4; color: #15803d; }
+    .workflow-node.action .workflow-node-kind { background: var(--primary-soft); color: var(--primary); }
     .workflow-node-copy { min-width: 0; flex: 1; }
     .workflow-node-eyebrow { display: block; font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 3px; }
     .workflow-node-title { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); }
     .workflow-node-summary { display: block; font-size: 10px; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .workflow-node-edit { color: #94a3b8; font-size: 11px; }
-    .workflow-connector { width: 2px; height: 28px; background: #94a3b8; margin: 0 auto; position: relative; }
+    .workflow-connector { width: 38px; height: 2px; background: #94a3b8; margin: auto 7px; position: relative; flex-shrink: 0; }
     .workflow-connector:after {
       content: ''; position: absolute; width: 7px; height: 7px; border-right: 2px solid #94a3b8;
-      border-bottom: 2px solid #94a3b8; transform: rotate(45deg); bottom: 0; left: -3px;
+      border-bottom: 2px solid #94a3b8; transform: rotate(-45deg); right: 0; top: -4px;
     }
     .builder-config-title {
       display: flex; align-items: center; gap: 8px; margin: 4px 0 14px; font-size: 13px;
@@ -501,10 +515,10 @@ router.get('/', requireAuth, (req, res) => {
     }
     .preset-templates-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .preset-chip {
-      background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; padding: 7px 14px;
+      background: var(--primary-soft); color: var(--primary); border: 1px solid var(--primary-border); padding: 7px 14px;
       border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
     }
-    .preset-chip:hover { background: #dbeafe; }
+    .preset-chip:hover { background: #dfecea; }
 
     /* Live Preview Bar */
     .live-preview-box { background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 16px; }
@@ -519,9 +533,9 @@ router.get('/', requireAuth, (req, res) => {
       width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center;
       justify-content: center; font-size: 20px;
     }
-    .stat-card-icon.blue { background: #eff6ff; color: #2563eb; }
+    .stat-card-icon.blue { background: var(--primary-soft); color: var(--primary); }
     .stat-card-icon.green { background: #f0fdf4; color: #16a34a; }
-    .stat-card-icon.purple { background: #f5f3ff; color: #7c3aed; }
+    .stat-card-icon.purple { background: #f1f5f9; color: #475569; }
     .stat-card-icon.amber { background: #fffbeb; color: #d97706; }
     .stat-card-info h3 { font-size: 22px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
     .stat-card-info p { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 2px; }
@@ -562,7 +576,7 @@ router.get('/', requireAuth, (req, res) => {
       width: 100%; padding: 10px 12px; border: 1px solid var(--border); border-radius: 8px;
       font-size: 13px; color: var(--text-main); background: #fff; outline: none; transition: border-color 0.2s ease;
     }
-    .form-control:focus { border-color: var(--primary); }
+    .form-control:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(31,95,99,.10); }
     textarea.form-control { resize: vertical; min-height: 90px; }
 
     /* Modal */
@@ -571,8 +585,8 @@ router.get('/', requireAuth, (req, res) => {
       backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
     }
     .modal {
-      background: #fff; border-radius: 18px; max-width: 1060px; width: 100%; max-height: 92vh;
-      overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      background: #fff; border-radius: 18px; max-width: 1160px; width: 100%; max-height: 92vh;
+      overflow: hidden; display: flex; flex-direction: column; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
     }
     .modal-header {
       padding: 22px 26px; border-bottom: 1px solid var(--border); display: flex;
@@ -580,7 +594,7 @@ router.get('/', requireAuth, (req, res) => {
     }
     .modal-header h3 { font-size: 17px; font-weight: 700; }
     .btn-close { background: none; border: none; font-size: 18px; color: var(--text-muted); cursor: pointer; }
-    .modal-body { padding: 26px; }
+    .modal-body { padding: 26px; overflow-y: auto; }
     .modal-footer {
       padding: 18px 26px; border-top: 1px solid var(--border); display: flex;
       justify-content: flex-end; gap: 12px; background: #f8fafc; border-radius: 0 0 18px 18px;
@@ -597,7 +611,7 @@ router.get('/', requireAuth, (req, res) => {
     }
     .log-row:last-child { border-bottom: none; }
     .log-tag { font-weight: 700; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
-    .log-tag.info { background: #eff6ff; color: #2563eb; }
+    .log-tag.info { background: var(--primary-soft); color: var(--primary); }
     .log-tag.success { background: #f0fdf4; color: #16a34a; }
     .log-tag.warn { background: #fffbeb; color: #d97706; }
     .log-tag.error { background: #fef2f2; color: #dc2626; }
@@ -609,13 +623,44 @@ router.get('/', requireAuth, (req, res) => {
     }
     .url-box code { font-family: monospace; font-size: 13px; color: var(--text-main); word-break: break-all; }
     @media (max-width: 760px) {
+      .top-header { height: 60px; padding: 0 14px; }
+      .header-brand { min-width: 0; gap: 9px; }
+      .brand-icon { width: 32px; height: 32px; font-size: 14px; flex-shrink: 0; }
+      .brand-title { min-width: 0; }
+      .brand-title h1 { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .brand-title span, .status-indicator, .btn-logout span { display: none; }
+      .header-actions { gap: 6px; }
+      .btn-logout { padding: 8px 10px; }
+      .tab-nav-wrapper { padding: 0 14px; overflow: hidden; }
+      .tab-nav { gap: 16px; overflow-x: auto; scrollbar-width: none; }
+      .tab-nav::-webkit-scrollbar { display: none; }
+      .tab-btn { padding: 12px 2px; font-size: 12px; }
+      .main-container { padding: 20px 14px; }
+      .master-switch-bar { padding: 13px 14px; gap: 10px; }
+      .switch-left { min-width: 0; gap: 10px; }
+      .switch-icon { width: 36px; height: 36px; font-size: 14px; flex-shrink: 0; }
+      .switch-text { min-width: 0; }
+      .switch-text h3 { font-size: 13px; }
+      .switch-text p { font-size: 11px; line-height: 1.35; }
+      .master-switch-bar > .toggle, .auto-card-header > .toggle { flex-shrink: 0; }
+      .section-toolbar { align-items: flex-start; gap: 12px; }
+      .section-title h2 { font-size: 17px; }
+      .section-title p { font-size: 11px; line-height: 1.4; }
+      .btn-create { padding: 10px 13px; flex-shrink: 0; }
+      .automations-grid { grid-template-columns: 1fr; gap: 14px; }
+      .auto-card { padding: 18px; }
+      .auto-card-title { padding-right: 8px; }
+      .badge { font-size: 9px; padding: 5px 8px; }
       .modal-backdrop { padding: 0; align-items: flex-end; }
       .modal { max-height: 96vh; border-radius: 18px 18px 0 0; }
       .modal-body { padding: 18px; }
-      .automation-builder { grid-template-columns: 1fr; }
-      .node-library { border-right: 0; border-bottom: 1px solid var(--border); }
-      .node-group { display: inline-block; vertical-align: top; width: calc(50% - 6px); margin-right: 6px; }
-      .workflow-canvas { padding: 18px 14px; min-height: 390px; }
+      .node-library { align-items: flex-start; }
+      .node-library-intro { width: 100%; }
+      .node-group { width: 100%; margin-left: 0; overflow-x: auto; padding-bottom: 3px; }
+      .workflow-canvas { padding: 18px 14px; }
+      .workflow-flow { flex-direction: column; }
+      .workflow-connector { width: 2px; height: 24px; margin: 0 auto; }
+      .workflow-connector:after { transform: rotate(45deg); right: -3px; top: auto; bottom: 0; }
       .builder-quick-start { align-items: flex-start; flex-direction: column; }
       .automation-presets { justify-content: flex-start; }
       .visual-options-grid { grid-template-columns: 1fr; }
@@ -690,7 +735,7 @@ router.get('/', requireAuth, (req, res) => {
         </div>
       </div>
       <label class="toggle">
-        <input type="checkbox" id="globalAutomationToggle" checked onchange="handleGlobalToggle()">
+        <input type="checkbox" id="globalAutomationToggle" onchange="handleGlobalToggle()" disabled>
         <span class="slider"></span>
       </label>
     </div>
@@ -926,8 +971,10 @@ router.get('/', requireAuth, (req, res) => {
 
           <div class="automation-builder">
             <aside class="node-library">
-              <div class="node-library-title">Biblioteca de nós</div>
-              <div class="node-library-help">Arraste para o canvas ou clique para substituir o nó do fluxo.</div>
+              <div class="node-library-intro">
+                <div class="node-library-title">Adicionar ao fluxo</div>
+                <div class="node-library-help">Arraste ou clique em uma opção.</div>
+              </div>
 
               <div class="node-group">
                 <div class="node-group-label">Gatilhos</div>
@@ -1017,6 +1064,14 @@ router.get('/', requireAuth, (req, res) => {
                   <option value="all">Todas as Etapas</option>
                 </select>
               </div>
+            </div>
+            <div class="form-group" style="margin:14px 0 0;">
+              <label for="autoStopAtStage">Desligar a automação a partir da etapa</label>
+              <select id="autoStopAtStage" class="form-control">
+                <option value="">Não desligar por avanço no funil</option>
+                <option value="Lead">Lead e todas as etapas seguintes</option>
+              </select>
+              <span style="display:block;font-size:10px;color:var(--text-muted);margin-top:4px;">Mesmo que a tag continue no contato, a IA não responde ao alcançar esta etapa.</span>
             </div>
           </div>
 
@@ -1170,7 +1225,7 @@ router.get('/', requireAuth, (req, res) => {
     let kommoPipelines = [];
 
     // Stage colors palette
-    const PRESET_COLORS = ['#2563eb', '#16a34a', '#d97706', '#7c3aed', '#0891b2', '#dc2626'];
+    const PRESET_COLORS = ['#1f5f63', '#334155', '#64748b', '#15803d', '#a16207', '#b42318'];
     let builderStages = [];
     let draggedAutomationNode = null;
 
@@ -1230,6 +1285,7 @@ router.get('/', requireAuth, (req, res) => {
       const keywords = document.getElementById('autoKeywords').value.trim();
       const requiredTags = document.getElementById('autoRequiredTags').value.trim();
       const blockedTags = document.getElementById('autoExcludedTags').value.trim();
+      const stopAtStage = document.getElementById('autoStopAtStage').value;
       const allowAll = document.getElementById('autoAllowAll').checked;
       const parts = [];
       if (pipeline && pipeline.value !== 'all') parts.push(pipeline.options[pipeline.selectedIndex]?.text || 'Funil específico');
@@ -1237,6 +1293,7 @@ router.get('/', requireAuth, (req, res) => {
       if (requiredTags) parts.push('Exige: ' + requiredTags);
       if (keywords) parts.push('Palavras: ' + keywords);
       if (blockedTags) parts.push('Bloqueia: ' + blockedTags);
+      if (stopAtStage) parts.push('Desliga em: ' + stopAtStage);
       if (allowAll) parts.push('Escopo global confirmado');
       return parts.length ? parts.join(' · ') : 'Bloqueada — defina uma coluna, tag ou palavra-chave';
     }
@@ -1248,7 +1305,7 @@ router.get('/', requireAuth, (req, res) => {
       const section = document.getElementById(sectionId);
       if (section) {
         section.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        section.style.boxShadow = '0 0 0 3px rgba(37,99,235,.12)';
+        section.style.boxShadow = '0 0 0 3px rgba(31,95,99,.12)';
         setTimeout(() => { section.style.boxShadow = ''; }, 900);
       }
     }
@@ -1295,6 +1352,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoPriority').value = '100';
         document.getElementById('autoStopAfterMatch').checked = true;
         document.getElementById('autoAllowAll').checked = false;
+        ensureStopStageOption('Lead');
       } else if (preset === 'qualification') {
         document.getElementById('autoName').value = 'Qualificação automática de novos leads';
         document.getElementById('autoDesc').value = 'Organiza novos contatos no CRM para acelerar o primeiro atendimento.';
@@ -1308,6 +1366,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoPriority').value = '20';
         document.getElementById('autoStopAfterMatch').checked = false;
         document.getElementById('autoAllowAll').checked = false;
+        ensureStopStageOption('Lead');
       } else {
         document.getElementById('autoName').value = 'Atendimento inteligente com IA';
         document.getElementById('autoDesc').value = 'Responde automaticamente mensagens usando a base de conhecimento da empresa.';
@@ -1321,12 +1380,13 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoPriority').value = '10';
         document.getElementById('autoStopAfterMatch').checked = false;
         document.getElementById('autoAllowAll').checked = false;
+        ensureStopStageOption('Lead');
       }
       renderAutomationCanvas();
     }
 
     function setupVisualAutomationBuilder() {
-      ['autoPipeline', 'autoStage', 'autoRequiredTags', 'autoExcludedTags', 'autoKeywords', 'autoAllowAll', 'templateText', 'actionAddTag', 'actionRemoveTag'].forEach(id => {
+      ['autoPipeline', 'autoStage', 'autoStopAtStage', 'autoRequiredTags', 'autoExcludedTags', 'autoKeywords', 'autoAllowAll', 'templateText', 'actionAddTag', 'actionRemoveTag'].forEach(id => {
         const field = document.getElementById(id);
         if (field) {
           field.addEventListener('input', () => renderAutomationCanvas());
@@ -1404,6 +1464,8 @@ router.get('/', requireAuth, (req, res) => {
               <div class="tags-container">
                 <span class="badge badge-trigger"><i class="fas fa-bolt"></i> \${triggerMap[a.trigger] || a.trigger}</span>
                 <span class="badge badge-action"><i class="fas fa-robot"></i> \${actionLabel}</span>
+                \${a.conditions?.requiredTags?.length ? '<span class="badge badge-condition"><i class="fas fa-tag"></i> Exige ' + escapeHtml(a.conditions.requiredTags.join(', ')) + '</span>' : ''}
+                \${a.conditions?.stopAtStageName ? '<span class="badge badge-condition"><i class="fas fa-stop-circle"></i> Para em ' + escapeHtml(a.conditions.stopAtStageName) + '</span>' : ''}
                 \${a.conditions?.keywordMatch ? '<span class="badge badge-condition"><i class="fas fa-key"></i> Palavras-chave</span>' : ''}
               </div>
 
@@ -1493,6 +1555,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoPriority').value = '0';
       document.getElementById('autoStopAfterMatch').checked = false;
       document.getElementById('autoAllowAll').checked = false;
+      ensureStopStageOption('Lead');
       document.getElementById('autoModal').style.display = 'flex';
       renderAutomationCanvas();
     }
@@ -1521,6 +1584,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoPriority').value = String(a.priority || 0);
       document.getElementById('autoStopAfterMatch').checked = a.stopAfterMatch === true;
       document.getElementById('autoAllowAll').checked = a.conditions?.allowAllLeads === true;
+      ensureStopStageOption(a.conditions?.stopAtStageName || '');
       document.getElementById('autoModal').style.display = 'flex';
       renderAutomationCanvas();
     }
@@ -1558,6 +1622,7 @@ router.get('/', requireAuth, (req, res) => {
         requiredTags: document.getElementById('autoRequiredTags').value.split(',').map(s => s.trim()).filter(Boolean),
         excludedTags: document.getElementById('autoExcludedTags').value.split(',').map(s => s.trim()).filter(Boolean),
         keywordMatch: document.getElementById('autoKeywords').value.trim(),
+        stopAtStageName: document.getElementById('autoStopAtStage').value,
         allowAllLeads: document.getElementById('autoAllowAll').checked,
       };
       const hasScope = conditions.allowAllLeads || conditions.pipelineId !== 'all' || conditions.stageId !== 'all' || conditions.requiredTags.length > 0 || conditions.keywordMatch;
@@ -1618,12 +1683,39 @@ router.get('/', requireAuth, (req, res) => {
         sel.innerHTML = '<option value="all">Ambos os Funis Ativos (Geral)</option>' + kommoPipelines.map(p => \`
           <option value="\${p.id}">Funil: \${escapeHtml(p.name)}</option>
         \`).join('');
+        populateStopStageOptions();
 
         // Renderiza grid de pipelines
         renderPipelinesGrid();
       } catch (err) {
         console.error(err);
       }
+    }
+
+    function populateStopStageOptions(selectedValue) {
+      const select = document.getElementById('autoStopAtStage');
+      if (!select) return;
+      const previous = selectedValue !== undefined ? selectedValue : select.value;
+      const names = [...new Set([
+        'Lead',
+        ...kommoPipelines.flatMap(p =>
+          (p._embedded?.statuses || []).map(status => status.name).filter(Boolean)
+        ),
+      ])];
+      select.innerHTML = '<option value="">Não desligar por avanço no funil</option>' + names.map(name =>
+        '<option value="' + escapeHtml(name) + '">' + escapeHtml(name) + ' e etapas seguintes</option>'
+      ).join('');
+      ensureStopStageOption(previous);
+    }
+
+    function ensureStopStageOption(value) {
+      const select = document.getElementById('autoStopAtStage');
+      if (!select) return;
+      const normalized = String(value || '');
+      if (normalized && ![...select.options].some(option => option.value === normalized)) {
+        select.add(new Option(normalized + ' e etapas seguintes', normalized));
+      }
+      select.value = normalized;
     }
 
     function renderPipelinesGrid() {
@@ -1639,7 +1731,7 @@ router.get('/', requireAuth, (req, res) => {
           <div class="pipeline-card">
             <div class="pipeline-header">
               <div class="pipeline-header-title">
-                <div style="width: 32px; height: 32px; border-radius: 8px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: var(--primary-soft); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
                   #\${pIdx + 1}
                 </div>
                 <div>
@@ -1803,16 +1895,42 @@ router.get('/', requireAuth, (req, res) => {
     async function handleGlobalToggle() {
       const checkbox = document.getElementById('globalAutomationToggle');
       const active = checkbox.checked;
+      if (!active && !confirm('Pausar o motor? Nenhuma automação responderá aos leads até ele ser reativado.')) {
+        checkbox.checked = true;
+        return;
+      }
+      checkbox.disabled = true;
       try {
         const r = await fetch(API_BASE + '/automation', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ active })
         });
+        if (!r.ok) throw new Error('Falha ao salvar estado');
         const data = await r.json();
         updateGlobalUI(data.active);
       } catch (err) {
         console.error(err);
+        await loadGlobalAutomationState();
+      } finally {
+        checkbox.disabled = false;
+      }
+    }
+
+    async function loadGlobalAutomationState() {
+      const checkbox = document.getElementById('globalAutomationToggle');
+      checkbox.disabled = true;
+      try {
+        const r = await fetch(API_BASE + '/automation', { cache: 'no-store' });
+        if (!r.ok) throw new Error('Falha ao consultar estado');
+        const data = await r.json();
+        updateGlobalUI(data.active === true);
+      } catch (err) {
+        console.error(err);
+        document.getElementById('globalSwitchTitle').textContent = 'Estado do motor indisponível';
+        document.getElementById('globalSwitchDesc').textContent = 'Atualize a página ou verifique a conexão com o servidor.';
+      } finally {
+        checkbox.disabled = false;
       }
     }
 
@@ -1982,6 +2100,7 @@ router.get('/', requireAuth, (req, res) => {
 
     // Inicialização
     setupVisualAutomationBuilder();
+    loadGlobalAutomationState();
     loadAutomations();
     loadKommoPipelines();
     loadExecutions();
@@ -2056,22 +2175,6 @@ router.post('/api/kommo/pipelines', requireAuth, async (req, res) => {
 });
 
 // ===== API: Master Switch (Estado Geral) =====
-const AUTOMATION_FILE = '/tmp/kommo-bot-automation.json';
-
-function readAutomationState() {
-  try {
-    if (fs.existsSync(AUTOMATION_FILE)) {
-      const data = JSON.parse(fs.readFileSync(AUTOMATION_FILE, 'utf8'));
-      return data.active !== false;
-    }
-  } catch {}
-  return true;
-}
-
-function writeAutomationState(active) {
-  fs.writeFileSync(AUTOMATION_FILE, JSON.stringify({ active, changedAt: new Date().toISOString() }));
-}
-
 router.get('/api/automation', requireAuth, (req, res) => {
   res.json({ active: readAutomationState() });
 });

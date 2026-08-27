@@ -85,3 +85,41 @@ test('escopo global depende de confirmação explícita', () => {
   assert.equal(hasExplicitAutomationScope(globalAutomation.conditions), true);
   assert.equal(evaluateConditions(globalAutomation, contextWithTags(['Aluno Ativo'])), true);
 });
+
+test('Contato Inicial desliga na etapa Lead e em todas as seguintes', () => {
+  const automation = {
+    conditions: {
+      ...initialContactAutomation.conditions,
+      stopAtStageName: 'Lead',
+    },
+  };
+  const pipeline = {
+    _embedded: {
+      statuses: [
+        { id: 10, name: 'Contato Inicial', sort: 10 },
+        { id: 20, name: 'Lead', sort: 20 },
+        { id: 30, name: 'Experimental Agendado', sort: 30 },
+      ],
+    },
+  };
+
+  assert.equal(evaluateConditions(automation, contextWithTags(['Contato Inicial'], {
+    pipeline,
+    lead: { status_id: 10, _embedded: { tags: [{ name: 'Contato Inicial' }] } },
+  })), true);
+  assert.equal(evaluateConditions(automation, contextWithTags(['Contato Inicial'], {
+    pipeline,
+    lead: { status_id: 20, _embedded: { tags: [{ name: 'Contato Inicial' }] } },
+  })), false);
+  assert.equal(evaluateConditions(automation, contextWithTags(['Contato Inicial'], {
+    pipeline,
+    lead: { status_id: 30, _embedded: { tags: [{ name: 'Contato Inicial' }] } },
+  })), false);
+});
+
+test('trava de etapa bloqueia se o funil não puder ser confirmado', () => {
+  const automation = {
+    conditions: { ...initialContactAutomation.conditions, stopAtStageName: 'Lead' },
+  };
+  assert.equal(evaluateConditions(automation, contextWithTags(['Contato Inicial'])), false);
+});

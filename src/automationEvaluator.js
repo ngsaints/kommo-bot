@@ -33,7 +33,7 @@ export function hasExplicitAutomationScope(conditions = {}) {
  * Filtros configurados trabalham em modo fail-closed: contexto ausente não passa.
  */
 export function evaluateConditions(automation, context) {
-  const { lead, text, messageType } = context;
+  const { lead, text, messageType, pipeline } = context;
   const conds = automation.conditions || {};
 
   // Segurança operacional: uma automação precisa declarar onde pode atuar.
@@ -46,6 +46,20 @@ export function evaluateConditions(automation, context) {
 
   if (conds.stageId && conds.stageId !== 'all') {
     if (!lead?.status_id || Number(lead.status_id) !== Number(conds.stageId)) return false;
+  }
+
+  // Impede que uma automação de primeiro contato continue atendendo depois
+  // que a oportunidade avançou no funil. Se a ordem não puder ser confirmada,
+  // bloqueia a execução por segurança.
+  if (conds.stopAtStageName) {
+    const statuses = [...(pipeline?._embedded?.statuses || [])]
+      .filter(status => status?.id != null)
+      .sort((a, b) => Number(a.sort || 0) - Number(b.sort || 0));
+    const cutoff = statuses.find(status =>
+      normalizeKommoValue(status.name) === normalizeKommoValue(conds.stopAtStageName)
+    );
+    const current = statuses.find(status => Number(status.id) === Number(lead?.status_id));
+    if (!cutoff || !current || Number(current.sort || 0) >= Number(cutoff.sort || 0)) return false;
   }
 
   const leadTags = getLeadTagNames(lead);

@@ -11,9 +11,11 @@ test('migra regras persistidas antigas para o escopo Contato Inicial', () => {
   assert.deepEqual(migrated[0].conditions.requiredTags, ['Contato Inicial']);
   assert.equal(migrated[0].priority, 10);
   assert.equal(migrated[0].stopAfterMatch, false);
+  assert.equal(migrated[0].conditions.stopAtStageName, 'Lead');
   assert.deepEqual(migrated[1].conditions.requiredTags, ['Contato Inicial']);
   assert.equal(migrated[1].priority, 100);
   assert.equal(migrated[1].stopAfterMatch, true);
+  assert.equal(migrated[1].conditions.stopAtStageName, 'Lead');
 });
 
 test('migração é idempotente e não duplica a tag', () => {

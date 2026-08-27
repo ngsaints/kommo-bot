@@ -24,6 +24,7 @@
         "image"
       ],
       "keywordMatch": "",
+      "stopAtStageName": "Lead",
       "allowAllLeads": false
     },
     "actions": [
@@ -65,6 +66,7 @@
         "text"
       ],
       "keywordMatch": "humano,atendente,gerente,falar com pessoa,responsavel,reclamacao,suporte humano",
+      "stopAtStageName": "Lead",
       "allowAllLeads": false
     },
     "actions": [

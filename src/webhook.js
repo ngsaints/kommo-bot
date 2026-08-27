@@ -1,4 +1,4 @@
-import { getLead, resolvePhone, sendWhatsApp, addTag, removeTag, updateLeadStage, addLeadNote } from './kommo.js';
+import { getLead, getPipelines, resolvePhone, sendWhatsApp, addTag, removeTag, updateLeadStage, addLeadNote } from './kommo.js';
 import { getChatHistory, saveChatMessage } from './redis.js';
 import { getAiResponse } from './agent.js';
 import { addExecution, addLog } from './logger.js';
@@ -181,8 +181,12 @@ export async function processKommoEvent(body, eventType) {
     throw err;
   }
 
+  const pipelines = await getPipelines();
+  const pipeline = pipelines.find(item => Number(item.id) === Number(lead.pipeline_id)) || null;
+
   const context = {
     lead,
+    pipeline,
     contactId,
     entityId,
     text,

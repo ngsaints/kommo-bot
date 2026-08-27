@@ -34,6 +34,7 @@ export function migrateAutomationSafety(automations) {
       conditions: {
         ...(automation.conditions || {}),
         requiredTags: hasInitialContact ? requiredTags : [...requiredTags, 'Contato Inicial'],
+        stopAtStageName: automation.conditions?.stopAtStageName || 'Lead',
         allowAllLeads: false,
       },
     };
@@ -109,6 +110,7 @@ export function saveAutomation(data) {
       excludedTags: Array.isArray(data.conditions?.excludedTags) ? data.conditions.excludedTags : [],
       messageTypes: Array.isArray(data.conditions?.messageTypes) ? data.conditions.messageTypes : ['text', 'audio', 'image'],
       keywordMatch: data.conditions?.keywordMatch || '',
+      stopAtStageName: data.conditions?.stopAtStageName || '',
       allowAllLeads: data.conditions?.allowAllLeads === true,
     },
     actions: Array.isArray(data.actions) && data.actions.length > 0 ? data.actions : [

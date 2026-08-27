@@ -135,12 +135,19 @@ export async function addLeadNote(leadId, text) {
   }
 }
 
+let pipelinesCache = { value: null, expiresAt: 0 };
+
 export async function getPipelines() {
+  if (pipelinesCache.value && pipelinesCache.expiresAt > Date.now()) {
+    return pipelinesCache.value;
+  }
   try {
     const { data } = await api.get('/leads/pipelines');
     const list = data._embedded?.pipelines || [];
     // Retorna apenas pipelines ativos (ignora arquivados)
-    return list.filter(p => !p.is_archive);
+    const activePipelines = list.filter(p => !p.is_archive);
+    pipelinesCache = { value: activePipelines, expiresAt: Date.now() + 60_000 };
+    return activePipelines;
   } catch (err) {
     console.error('Erro ao buscar pipelines:', err.message);
     return [];
