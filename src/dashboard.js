@@ -313,6 +313,70 @@ router.get('/', requireAuth, (req, res) => {
     }
     .btn-create:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
+    /* Maria operational flow */
+    .maria-flow-panel {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
+      margin-bottom: 24px; overflow: hidden; box-shadow: 0 1px 2px rgba(15,23,42,.035);
+    }
+    .maria-flow-header {
+      padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between;
+      gap: 18px; border-bottom: 1px solid var(--border); background: #fff;
+    }
+    .maria-flow-heading { display: flex; align-items: flex-start; gap: 12px; }
+    .maria-flow-icon {
+      width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; display: flex;
+      align-items: center; justify-content: center; color: var(--primary); background: var(--primary-soft);
+      border: 1px solid var(--primary-border);
+    }
+    .maria-flow-heading h2 { font-size: 16px; font-weight: 700; color: var(--text-main); }
+    .maria-flow-heading p { margin-top: 4px; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
+    .flow-runtime-status {
+      display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; padding: 7px 10px;
+      border-radius: 8px; border: 1px solid var(--border); background: #f8fafc;
+      color: #475569; font-size: 11px; font-weight: 700;
+    }
+    .flow-runtime-status .status-dot { background: #94a3b8; }
+    .flow-runtime-status.active { color: #166534; background: #f0fdf4; border-color: #bbf7d0; }
+    .flow-runtime-status.active .status-dot { background: var(--success); }
+    .maria-flow-body { padding: 20px; }
+    .maria-flow-label {
+      display: block; margin-bottom: 10px; font-size: 10px; font-weight: 700; color: #64748b;
+      text-transform: uppercase; letter-spacing: .08em;
+    }
+    .maria-stage-flow { display: grid; grid-template-columns: 1fr 28px 1fr 44px 1fr; align-items: stretch; }
+    .maria-stage {
+      min-width: 0; padding: 14px; border: 1px solid var(--border); border-radius: 11px; background: #f8fafc;
+    }
+    .maria-stage.allowed { border-color: var(--primary-border); background: var(--primary-soft); }
+    .maria-stage-stop { border-color: #fecaca; background: #fef2f2; }
+    .maria-stage-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
+    .maria-stage-index { font-size: 10px; font-weight: 700; color: #94a3b8; }
+    .maria-stage-state {
+      padding: 3px 6px; border-radius: 5px; font-size: 9px; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .04em; color: var(--primary); background: #fff; border: 1px solid var(--primary-border);
+    }
+    .maria-stage-stop .maria-stage-state { color: #991b1b; border-color: #fecaca; }
+    .maria-stage strong { display: block; font-size: 13px; color: var(--text-main); }
+    .maria-stage p { margin-top: 5px; font-size: 10px; color: var(--text-muted); line-height: 1.4; }
+    .maria-flow-arrow { display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 13px; }
+    .maria-stop-divider { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
+    .maria-stop-divider i { color: var(--danger); font-size: 15px; }
+    .maria-stop-divider span { font-size: 8px; font-weight: 700; color: #991b1b; text-transform: uppercase; text-align: center; }
+    .flow-facts {
+      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px;
+    }
+    .flow-fact { padding: 11px 12px; border-radius: 9px; background: #f8fafc; border: 1px solid #f1f5f9; }
+    .flow-fact span { display: block; font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; }
+    .flow-fact strong { display: block; margin-top: 4px; font-size: 11px; color: #334155; line-height: 1.35; }
+    .implementation-progress { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .progress-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
+    .progress-step { position: relative; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
+    .progress-step.done { border-color: #bbf7d0; background: #f0fdf4; }
+    .progress-step-status { display: flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #64748b; }
+    .progress-step.done .progress-step-status { color: #166534; }
+    .progress-step strong { display: block; margin-top: 7px; font-size: 11px; color: var(--text-main); }
+    .progress-step p { margin-top: 4px; font-size: 10px; line-height: 1.4; color: var(--text-muted); }
+
     /* Automations Grid */
     .automations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
     .auto-card {
@@ -473,13 +537,15 @@ router.get('/', requireAuth, (req, res) => {
     .canvas-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
     .canvas-header strong { font-size: 12px; color: #334155; }
     .canvas-header span { font-size: 10px; color: #94a3b8; }
-    .workflow-flow { display: flex; align-items: stretch; max-width: 920px; margin: 0 auto; }
+    .workflow-flow { display: flex; align-items: stretch; width: max-content; min-width: 100%; margin: 0 auto; }
     .workflow-node {
-      position: relative; display: flex; align-items: center; gap: 11px; flex: 1; min-width: 0;
+      position: relative; display: flex; align-items: center; gap: 11px; flex: 0 0 230px; min-width: 230px;
       padding: 14px; border: 1px solid #cbd5e1; background: #fff; border-radius: 12px;
       box-shadow: 0 3px 10px rgba(15,23,42,.055); cursor: pointer; text-align: left;
       transition: border-color .15s ease, box-shadow .15s ease, transform .15s ease;
     }
+    .workflow-node[draggable="true"] { cursor: grab; }
+    .workflow-node[draggable="true"]:active { cursor: grabbing; }
     .workflow-node:hover, .workflow-node.selected { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(31,95,99,.09); transform: translateY(-1px); }
     .workflow-node-kind {
       width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center;
@@ -493,11 +559,33 @@ router.get('/', requireAuth, (req, res) => {
     .workflow-node-title { display: block; font-size: 13px; font-weight: 700; color: var(--text-main); }
     .workflow-node-summary { display: block; font-size: 10px; color: var(--text-muted); margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     .workflow-node-edit { color: #94a3b8; font-size: 11px; }
+    .workflow-node-tools { display: flex; align-items: center; gap: 4px; }
+    .workflow-node-remove {
+      width: 25px; height: 25px; border: 0; border-radius: 6px; background: transparent;
+      color: #94a3b8; cursor: pointer;
+    }
+    .workflow-node-remove:hover { color: var(--danger); background: #fef2f2; }
     .workflow-connector { width: 38px; height: 2px; background: #94a3b8; margin: auto 7px; position: relative; flex-shrink: 0; }
     .workflow-connector:after {
       content: ''; position: absolute; width: 7px; height: 7px; border-right: 2px solid #94a3b8;
       border-bottom: 2px solid #94a3b8; transform: rotate(-45deg); right: 0; top: -4px;
     }
+    .workflow-drop-zone {
+      width: 42px; min-width: 42px; align-self: stretch; position: relative; display: flex;
+      align-items: center; justify-content: center; margin: 0 3px; border: 1px dashed transparent;
+      border-radius: 9px; color: #94a3b8; transition: all .15s ease;
+    }
+    .workflow-drop-zone:before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 2px; background: #cbd5e1; }
+    .workflow-drop-zone span {
+      position: relative; z-index: 1; width: 20px; height: 20px; display: flex; align-items: center;
+      justify-content: center; border-radius: 50%; background: #fff; border: 1px solid #cbd5e1;
+      font-size: 12px; font-weight: 700;
+    }
+    .workflow-drop-zone.drop-ready, .workflow-drop-zone:hover {
+      width: 64px; min-width: 64px; border-color: #7da9a6; background: rgba(237,244,243,.8); color: var(--primary);
+    }
+    .workflow-drop-zone.drop-ready span, .workflow-drop-zone:hover span { border-color: var(--primary); }
+    .canvas-drag-hint { color: var(--primary) !important; font-weight: 600; }
     .builder-config-title {
       display: flex; align-items: center; gap: 8px; margin: 4px 0 14px; font-size: 13px;
       font-weight: 700; color: var(--text-main);
@@ -672,8 +760,18 @@ router.get('/', requireAuth, (req, res) => {
       .node-group { width: 100%; margin-left: 0; overflow-x: auto; padding-bottom: 3px; }
       .workflow-canvas { padding: 18px 14px; }
       .workflow-flow { flex-direction: column; }
+      .workflow-flow { width: 100%; }
+      .workflow-node { flex-basis: auto; min-width: 0; width: 100%; }
       .workflow-connector { width: 2px; height: 24px; margin: 0 auto; }
       .workflow-connector:after { transform: rotate(45deg); right: -3px; top: auto; bottom: 0; }
+      .workflow-drop-zone { width: 100%; min-width: 100%; height: 32px; min-height: 32px; margin: 3px 0; }
+      .workflow-drop-zone:before { left: 50%; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
+      .workflow-drop-zone.drop-ready, .workflow-drop-zone:hover { width: 100%; min-width: 100%; height: 48px; }
+      .maria-flow-header { flex-direction: column; }
+      .maria-stage-flow { grid-template-columns: 1fr; }
+      .maria-flow-arrow { min-height: 25px; transform: rotate(90deg); }
+      .maria-stop-divider { min-height: 42px; }
+      .flow-facts, .progress-grid { grid-template-columns: 1fr 1fr; }
       .builder-quick-start { align-items: flex-start; flex-direction: column; }
       .automation-presets { justify-content: flex-start; }
       .visual-options-grid { grid-template-columns: 1fr; }
@@ -755,6 +853,74 @@ router.get('/', requireAuth, (req, res) => {
 
     <!-- TAB 1: AUTOMAÇÕES -->
     <div id="tab-automations" class="tab-content active">
+      <section class="maria-flow-panel" aria-labelledby="mariaFlowTitle">
+        <div class="maria-flow-header">
+          <div class="maria-flow-heading">
+            <div class="maria-flow-icon"><i class="fas fa-route"></i></div>
+            <div>
+              <h2 id="mariaFlowTitle">Fluxo operacional da Maria</h2>
+              <p>Visão fiel do escopo implementado para a automação <strong>Atendimento Inteligente com IA</strong>.</p>
+            </div>
+          </div>
+          <span class="flow-runtime-status" id="mariaRuntimeStatus"><span class="status-dot"></span> Verificando automação</span>
+        </div>
+        <div class="maria-flow-body">
+          <span class="maria-flow-label">Onde a Maria pode responder</span>
+          <div class="maria-stage-flow">
+            <article class="maria-stage allowed">
+              <div class="maria-stage-top"><span class="maria-stage-index">FASE 01</span><span class="maria-stage-state">Permitida</span></div>
+              <strong>Contato Inicial</strong>
+              <p>O Kommo cria a tag; a integração apenas confere a presença dela.</p>
+            </article>
+            <div class="maria-flow-arrow"><i class="fas fa-arrow-right"></i></div>
+            <article class="maria-stage allowed">
+              <div class="maria-stage-top"><span class="maria-stage-index">FASE 02</span><span class="maria-stage-state">Permitida</span></div>
+              <strong>Primeiro Contato (Prioridade)</strong>
+              <p>Última etapa em que a Maria pode conversar com o lead.</p>
+            </article>
+            <div class="maria-stop-divider"><i class="fas fa-shield-halved"></i><span>Barreira<br>da IA</span></div>
+            <article class="maria-stage maria-stage-stop">
+              <div class="maria-stage-top"><span class="maria-stage-index">A PARTIR DAQUI</span><span class="maria-stage-state">Bloqueada</span></div>
+              <strong>Lead e fases seguintes</strong>
+              <p>A Maria não responde, mesmo que a tag Contato Inicial permaneça no contato.</p>
+            </article>
+          </div>
+
+          <div class="flow-facts">
+            <div class="flow-fact"><span>Gatilho</span><strong>Nova mensagem no WhatsApp</strong></div>
+            <div class="flow-fact"><span>Funil obrigatório</span><strong>Funil de vendas</strong></div>
+            <div class="flow-fact"><span>Tag obrigatória</span><strong>Contato Inicial</strong></div>
+            <div class="flow-fact"><span>Política segura</span><strong>Sem funil, fase ou tag: não responde</strong></div>
+          </div>
+
+          <div class="implementation-progress">
+            <span class="maria-flow-label">Andamento do plano de ação</span>
+            <div class="progress-grid">
+              <article class="progress-step done">
+                <span class="progress-step-status"><i class="fas fa-circle-check"></i> Implementado</span>
+                <strong>1. Gatilho protegido</strong>
+                <p>Valida funil, tag e lista explícita de fases permitidas.</p>
+              </article>
+              <article class="progress-step">
+                <span class="progress-step-status"><i class="far fa-clock"></i> Próxima etapa</span>
+                <strong>2. Preencher o card</strong>
+                <p>Gravar nome, modalidade, experiência e objetivo pela API do Kommo.</p>
+              </article>
+              <article class="progress-step">
+                <span class="progress-step-status"><i class="far fa-clock"></i> Próxima etapa</span>
+                <strong>3. Qualificar e avançar</strong>
+                <p>Adicionar Lead Qualificado e mover após validar os campos mínimos.</p>
+              </article>
+              <article class="progress-step">
+                <span class="progress-step-status"><i class="far fa-clock"></i> Próxima etapa</span>
+                <strong>4. Concluir agenda</strong>
+                <p>Persistir a reserva e só então avançar para Experimental Agendado.</p>
+              </article>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <div class="section-toolbar">
         <div class="section-title">
           <h2>Regras de Automação</h2>
@@ -986,20 +1152,20 @@ router.get('/', requireAuth, (req, res) => {
             <aside class="node-library">
               <div class="node-library-intro">
                 <div class="node-library-title">Adicionar ao fluxo</div>
-                <div class="node-library-help">Arraste ou clique em uma opção.</div>
+                <div class="node-library-help">Arraste ações para o ponto desejado. Os nós existentes podem ser reordenados.</div>
               </div>
 
               <div class="node-group">
                 <div class="node-group-label">Gatilhos</div>
-                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'trigger', 'message_add')" onclick="addNodeFromPalette('trigger', 'message_add')">
+                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'trigger', 'message_add')" ondragend="endNodeDrag()" onclick="addNodeFromPalette('trigger', 'message_add')">
                   <span class="palette-node-icon trigger"><i class="fas fa-comment-dots"></i></span>
                   <span class="palette-node-copy"><strong>Nova mensagem</strong><span>WhatsApp recebido</span></span>
                 </button>
-                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'trigger', 'lead_add')" onclick="addNodeFromPalette('trigger', 'lead_add')">
+                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'trigger', 'lead_add')" ondragend="endNodeDrag()" onclick="addNodeFromPalette('trigger', 'lead_add')">
                   <span class="palette-node-icon trigger"><i class="fas fa-user-plus"></i></span>
                   <span class="palette-node-copy"><strong>Novo lead</strong><span>Entrada no Kommo</span></span>
                 </button>
-                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'trigger', 'lead_stage_change')" onclick="addNodeFromPalette('trigger', 'lead_stage_change')">
+                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'trigger', 'lead_stage_change')" ondragend="endNodeDrag()" onclick="addNodeFromPalette('trigger', 'lead_stage_change')">
                   <span class="palette-node-icon trigger"><i class="fas fa-arrow-right-arrow-left"></i></span>
                   <span class="palette-node-copy"><strong>Mudança de etapa</strong><span>Movido no funil</span></span>
                 </button>
@@ -1007,15 +1173,15 @@ router.get('/', requireAuth, (req, res) => {
 
               <div class="node-group">
                 <div class="node-group-label">Ações</div>
-                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'action', 'ai_chat')" onclick="addNodeFromPalette('action', 'ai_chat')">
+                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'action', 'ai_chat')" ondragend="endNodeDrag()" onclick="addNodeFromPalette('action', 'ai_chat')">
                   <span class="palette-node-icon action"><i class="fas fa-robot"></i></span>
                   <span class="palette-node-copy"><strong>Responder com IA</strong><span>Resposta contextual</span></span>
                 </button>
-                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'action', 'send_template')" onclick="addNodeFromPalette('action', 'send_template')">
+                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'action', 'send_template')" ondragend="endNodeDrag()" onclick="addNodeFromPalette('action', 'send_template')">
                   <span class="palette-node-icon action"><i class="fas fa-paper-plane"></i></span>
                   <span class="palette-node-copy"><strong>Enviar mensagem</strong><span>Texto predefinido</span></span>
                 </button>
-                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'action', 'change_stage')" onclick="addNodeFromPalette('action', 'change_stage')">
+                <button type="button" class="palette-node" draggable="true" ondragstart="beginNodeDrag(event, 'action', 'change_stage')" ondragend="endNodeDrag()" onclick="addNodeFromPalette('action', 'change_stage')">
                   <span class="palette-node-icon action"><i class="fas fa-tags"></i></span>
                   <span class="palette-node-copy"><strong>Atualizar CRM</strong><span>Etapa e tags</span></span>
                 </button>
@@ -1025,7 +1191,7 @@ router.get('/', requireAuth, (req, res) => {
             <section class="workflow-canvas" id="workflowCanvas" ondragover="allowNodeDrop(event)" ondragleave="leaveNodeDrop(event)" ondrop="dropNodeOnCanvas(event)">
               <div class="canvas-header">
                 <strong>Fluxo da automação</strong>
-                <span>Entrada → regras → ação</span>
+                <span id="canvasDragHint">Arraste para inserir ou reordenar</span>
               </div>
               <div class="workflow-flow" id="workflowFlow"></div>
             </section>
@@ -1243,12 +1409,15 @@ router.get('/', requireAuth, (req, res) => {
     const API_BASE = '/home/workflows/api';
     const START_TIME = Date.now();
     let currentAutomations = [];
+    let globalAutomationActive = null;
     let kommoPipelines = [];
 
     // Stage colors palette
     const PRESET_COLORS = ['#1f5f63', '#334155', '#64748b', '#15803d', '#a16207', '#b42318'];
     let builderStages = [];
     let draggedAutomationNode = null;
+    let builderActionNodes = [];
+    let selectedActionIndex = 0;
 
     const AUTOMATION_NODE_CATALOG = {
       trigger: {
@@ -1264,40 +1433,168 @@ router.get('/', requireAuth, (req, res) => {
     };
 
     function beginNodeDrag(e, kind, value) {
-      draggedAutomationNode = { kind, value };
-      e.dataTransfer.effectAllowed = 'copy';
-      e.dataTransfer.setData('text/plain', kind + ':' + value);
+      draggedAutomationNode = { source: 'palette', kind, value };
+      e.dataTransfer.effectAllowed = kind === 'action' ? 'copy' : 'link';
+      e.dataTransfer.setData('text/plain', 'palette:' + kind + ':' + value);
+      setCanvasDragFeedback(kind === 'action' ? 'Solte no + para inserir a ação' : 'Solte para trocar o gatilho único');
+    }
+
+    function beginCanvasActionDrag(e, index) {
+      syncSelectedActionFields();
+      draggedAutomationNode = { source: 'canvas', kind: 'action', index };
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', 'canvas-action:' + index);
+      setCanvasDragFeedback('Solte no + para reordenar esta ação');
+    }
+
+    function endNodeDrag() {
+      draggedAutomationNode = null;
+      document.getElementById('workflowCanvas')?.classList.remove('drag-over');
+      document.querySelectorAll('.workflow-drop-zone').forEach(zone => zone.classList.remove('drop-ready'));
+      setCanvasDragFeedback('Arraste para inserir ou reordenar');
     }
 
     function allowNodeDrop(e) {
       e.preventDefault();
-      e.dataTransfer.dropEffect = 'copy';
+      e.dataTransfer.dropEffect = draggedAutomationNode?.source === 'canvas' ? 'move' : 'copy';
       document.getElementById('workflowCanvas').classList.add('drag-over');
+      document.querySelectorAll('.workflow-drop-zone').forEach(zone => zone.classList.remove('drop-ready'));
+      const zone = e.target.closest('.workflow-drop-zone');
+      if (zone && draggedAutomationNode?.kind === 'action') zone.classList.add('drop-ready');
     }
 
     function leaveNodeDrop(e) {
       if (!e.currentTarget.contains(e.relatedTarget)) {
         e.currentTarget.classList.remove('drag-over');
+        document.querySelectorAll('.workflow-drop-zone').forEach(zone => zone.classList.remove('drop-ready'));
       }
     }
 
     function dropNodeOnCanvas(e) {
       e.preventDefault();
       document.getElementById('workflowCanvas').classList.remove('drag-over');
+      document.querySelectorAll('.workflow-drop-zone').forEach(zone => zone.classList.remove('drop-ready'));
       let node = draggedAutomationNode;
       const raw = e.dataTransfer.getData('text/plain');
-      if (!node && raw.includes(':')) {
+      if (!node && raw.startsWith('palette:')) {
         const parts = raw.split(':');
-        node = { kind: parts[0], value: parts[1] };
+        node = { source: 'palette', kind: parts[1], value: parts[2] };
+      } else if (!node && raw.startsWith('canvas-action:')) {
+        node = { source: 'canvas', kind: 'action', index: Number(raw.split(':')[1]) };
       }
-      if (node) addNodeFromPalette(node.kind, node.value);
+      const zone = e.target.closest('.workflow-drop-zone');
+      const dropIndex = zone ? Number(zone.dataset.dropIndex) : builderActionNodes.length;
+      if (node?.source === 'canvas' && node.kind === 'action') {
+        reorderBuilderAction(node.index, dropIndex);
+      } else if (node?.source === 'palette') {
+        addNodeFromPalette(node.kind, node.value, dropIndex);
+      }
       draggedAutomationNode = null;
+      setCanvasDragFeedback('Arraste para inserir ou reordenar');
     }
 
-    function addNodeFromPalette(kind, value) {
-      if (kind === 'trigger') selectTrigger(value);
-      if (kind === 'action') selectAction(value);
-      renderAutomationCanvas(kind);
+    function setCanvasDragFeedback(message) {
+      const hint = document.getElementById('canvasDragHint');
+      if (!hint) return;
+      hint.textContent = message;
+      hint.classList.toggle('canvas-drag-hint', Boolean(draggedAutomationNode));
+    }
+
+    function createBuilderAction(type = 'ai_chat', source = {}) {
+      return {
+        _builderId: source._builderId || ('action-' + Date.now() + '-' + Math.random().toString(16).slice(2)),
+        type,
+        templateText: source.templateText || '',
+        customPrompt: source.customPrompt || '',
+        useCustomPrompt: source.useCustomPrompt === true || Boolean(source.customPrompt),
+        sendChannel: source.sendChannel || 'whatsapp_uazapi',
+        addTagOnSuccess: source.addTagOnSuccess || '',
+        removeTagOnSuccess: source.removeTagOnSuccess || ''
+      };
+    }
+
+    function resetBuilderActions(type = 'ai_chat', source = {}) {
+      builderActionNodes = [createBuilderAction(type, source)];
+      selectedActionIndex = 0;
+      loadSelectedActionFields();
+    }
+
+    function syncSelectedActionFields() {
+      const action = builderActionNodes[selectedActionIndex];
+      if (!action) return;
+      action.type = document.getElementById('actionType').value || action.type;
+      action.templateText = document.getElementById('templateText').value.trim();
+      action.customPrompt = document.getElementById('aiCustomPrompt').value.trim();
+      action.useCustomPrompt = Boolean(action.customPrompt);
+      action.addTagOnSuccess = document.getElementById('actionAddTag').value.trim();
+      action.removeTagOnSuccess = document.getElementById('actionRemoveTag').value.trim();
+    }
+
+    function loadSelectedActionFields() {
+      const action = builderActionNodes[selectedActionIndex];
+      if (!action) return;
+      document.getElementById('actionType').value = action.type;
+      document.getElementById('templateText').value = action.templateText || '';
+      document.getElementById('aiCustomPrompt').value = action.customPrompt || '';
+      document.getElementById('actionAddTag').value = action.addTagOnSuccess || '';
+      document.getElementById('actionRemoveTag').value = action.removeTagOnSuccess || '';
+      document.querySelectorAll('[id^="actCard_"]').forEach(el => el.classList.remove('selected'));
+      const active = document.getElementById('actCard_' + action.type);
+      if (active) active.classList.add('selected');
+      document.getElementById('templateFields').style.display = action.type === 'send_template' ? 'block' : 'none';
+      document.getElementById('aiPromptFields').style.display = action.type === 'ai_chat' ? 'block' : 'none';
+    }
+
+    function selectBuilderAction(index) {
+      if (index < 0 || index >= builderActionNodes.length) return;
+      syncSelectedActionFields();
+      selectedActionIndex = index;
+      loadSelectedActionFields();
+      renderAutomationCanvas('action');
+      focusBuilderSection('configAction', 'action');
+    }
+
+    function addNodeFromPalette(kind, value, dropIndex = builderActionNodes.length) {
+      if (kind === 'trigger') {
+        selectTrigger(value);
+        setCanvasDragFeedback('Gatilho único atualizado');
+        return;
+      }
+      if (kind !== 'action') return;
+      syncSelectedActionFields();
+      const index = Math.max(0, Math.min(Number(dropIndex), builderActionNodes.length));
+      builderActionNodes.splice(index, 0, createBuilderAction(value));
+      selectedActionIndex = index;
+      loadSelectedActionFields();
+      renderAutomationCanvas('action');
+    }
+
+    function reorderBuilderAction(fromIndex, dropIndex) {
+      if (fromIndex < 0 || fromIndex >= builderActionNodes.length) return;
+      syncSelectedActionFields();
+      const selectedId = builderActionNodes[selectedActionIndex]?._builderId;
+      const moved = builderActionNodes.splice(fromIndex, 1)[0];
+      let target = Math.max(0, Math.min(Number(dropIndex), builderActionNodes.length + 1));
+      if (fromIndex < target) target -= 1;
+      builderActionNodes.splice(Math.max(0, Math.min(target, builderActionNodes.length)), 0, moved);
+      selectedActionIndex = Math.max(0, builderActionNodes.findIndex(action => action._builderId === selectedId));
+      loadSelectedActionFields();
+      renderAutomationCanvas('action');
+    }
+
+    function removeBuilderAction(e, index) {
+      e.stopPropagation();
+      if (builderActionNodes.length === 1) {
+        alert('A automação precisa ter pelo menos uma ação.');
+        return;
+      }
+      syncSelectedActionFields();
+      const selectedId = builderActionNodes[selectedActionIndex]?._builderId;
+      builderActionNodes.splice(index, 1);
+      const preservedIndex = builderActionNodes.findIndex(action => action._builderId === selectedId);
+      selectedActionIndex = preservedIndex >= 0 ? preservedIndex : Math.min(index, builderActionNodes.length - 1);
+      loadSelectedActionFields();
+      renderAutomationCanvas('action');
     }
 
     function getConditionSummary() {
@@ -1352,9 +1649,7 @@ router.get('/', requireAuth, (req, res) => {
       const flow = document.getElementById('workflowFlow');
       if (!flow) return;
       const triggerType = document.getElementById('autoTrigger').value || 'message_add';
-      const actionType = document.getElementById('actionType').value || 'ai_chat';
       const trigger = AUTOMATION_NODE_CATALOG.trigger[triggerType] || AUTOMATION_NODE_CATALOG.trigger.message_add;
-      const action = AUTOMATION_NODE_CATALOG.action[actionType] || AUTOMATION_NODE_CATALOG.action.ai_chat;
       const conditionSummary = getConditionSummary();
 
       function nodeHtml(kind, eyebrow, title, summary, icon, sectionId) {
@@ -1367,12 +1662,34 @@ router.get('/', requireAuth, (req, res) => {
           '<span class="workflow-node-edit"><i class="fas fa-pen"></i></span></button>';
       }
 
+      function dropZoneHtml(index) {
+        return '<div class="workflow-drop-zone" data-drop-index="' + index + '" title="Solte uma ação aqui"><span>+</span></div>';
+      }
+
+      function actionNodeHtml(action, index) {
+        const definition = AUTOMATION_NODE_CATALOG.action[action.type] || AUTOMATION_NODE_CATALOG.action.ai_chat;
+        const selected = selectedKind === 'action' && selectedActionIndex === index ? ' selected' : '';
+        return '<div class="workflow-node action' + selected + '" draggable="true" data-kind="action" data-action-index="' + index + '" ' +
+          'ondragstart="beginCanvasActionDrag(event, ' + index + ')" ondragend="endNodeDrag()" onclick="selectBuilderAction(' + index + ')" role="button" tabindex="0">' +
+          '<span class="workflow-node-kind"><i class="fas ' + definition.icon + '"></i></span>' +
+          '<span class="workflow-node-copy"><span class="workflow-node-eyebrow">Ação ' + (index + 1) + '</span>' +
+          '<span class="workflow-node-title">' + escapeHtml(definition.title) + '</span>' +
+          '<span class="workflow-node-summary">' + escapeHtml(definition.summary) + '</span></span>' +
+          '<span class="workflow-node-tools"><i class="fas fa-grip-vertical workflow-node-edit"></i>' +
+          '<button type="button" class="workflow-node-remove" onclick="removeBuilderAction(event, ' + index + ')" title="Remover ação"><i class="fas fa-times"></i></button></span></div>';
+      }
+
+      let actionsHtml = '';
+      builderActionNodes.forEach((action, index) => {
+        actionsHtml += dropZoneHtml(index) + actionNodeHtml(action, index);
+      });
+      actionsHtml += dropZoneHtml(builderActionNodes.length);
+
       flow.innerHTML =
         nodeHtml('trigger', 'Quando acontecer', trigger.title, trigger.summary, trigger.icon, 'configTrigger') +
         '<div class="workflow-connector"></div>' +
         nodeHtml('condition', 'Somente se', 'Filtros e condições', conditionSummary, 'fa-filter', 'configConditions') +
-        '<div class="workflow-connector"></div>' +
-        nodeHtml('action', 'Então faça', action.title, action.summary, action.icon, 'configAction');
+        actionsHtml;
     }
 
     function applyAutomationPreset(preset) {
@@ -1380,7 +1697,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoName').value = 'Transbordo para atendimento humano';
         document.getElementById('autoDesc').value = 'Identifica pedidos de atendimento humano e encaminha a conversa para a equipe.';
         selectTrigger('message_add');
-        selectAction('send_template');
+        resetBuilderActions('send_template');
         document.getElementById('autoKeywords').value = 'humano, atendente, falar com pessoa, gerente, suporte';
         document.getElementById('autoRequiredTags').value = 'Contato Inicial';
         document.getElementById('autoExcludedTags').value = 'Atendimento Humano';
@@ -1396,7 +1713,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoName').value = 'Qualificação automática de novos leads';
         document.getElementById('autoDesc').value = 'Organiza novos contatos no CRM para acelerar o primeiro atendimento.';
         selectTrigger('lead_add');
-        selectAction('change_stage');
+        resetBuilderActions('change_stage');
         document.getElementById('autoKeywords').value = '';
         document.getElementById('autoRequiredTags').value = 'Contato Inicial';
         document.getElementById('autoExcludedTags').value = '';
@@ -1411,7 +1728,7 @@ router.get('/', requireAuth, (req, res) => {
         document.getElementById('autoName').value = 'Atendimento inteligente com IA';
         document.getElementById('autoDesc').value = 'Responde automaticamente mensagens usando a base de conhecimento da empresa.';
         selectTrigger('message_add');
-        selectAction('ai_chat');
+        resetBuilderActions('ai_chat');
         document.getElementById('autoKeywords').value = '';
         document.getElementById('autoRequiredTags').value = 'Contato Inicial';
         document.getElementById('autoExcludedTags').value = 'Atendimento Humano, Nao Perturbe';
@@ -1423,17 +1740,26 @@ router.get('/', requireAuth, (req, res) => {
         ensureStopStageOption('Lead');
         setProtectedStageScope(['Contato Inicial', 'Primeiro Contato (Prioridade)']);
       }
+      syncSelectedActionFields();
       renderAutomationCanvas();
     }
 
     function setupVisualAutomationBuilder() {
-      ['autoPipeline', 'autoStage', 'autoStopAtStage', 'autoRequiredTags', 'autoExcludedTags', 'autoKeywords', 'autoAllowAll', 'templateText', 'actionAddTag', 'actionRemoveTag'].forEach(id => {
+      ['autoPipeline', 'autoStage', 'autoStopAtStage', 'autoRequiredTags', 'autoExcludedTags', 'autoKeywords', 'autoAllowAll'].forEach(id => {
         const field = document.getElementById(id);
         if (field) {
           field.addEventListener('input', () => renderAutomationCanvas());
           field.addEventListener('change', () => renderAutomationCanvas());
         }
       });
+      ['templateText', 'aiCustomPrompt', 'actionAddTag', 'actionRemoveTag'].forEach(id => {
+        const field = document.getElementById(id);
+        if (field) {
+          field.addEventListener('input', () => { syncSelectedActionFields(); renderAutomationCanvas('action'); });
+          field.addEventListener('change', () => { syncSelectedActionFields(); renderAutomationCanvas('action'); });
+        }
+      });
+      resetBuilderActions('ai_chat');
       renderAutomationCanvas();
     }
 
@@ -1472,6 +1798,7 @@ router.get('/', requireAuth, (req, res) => {
 
     function renderAutomationsGrid() {
       const grid = document.getElementById('automationsGrid');
+      renderMariaRuntimeStatus();
       if (!currentAutomations || currentAutomations.length === 0) {
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhuma automação cadastrada. Clique em "+ Nova Automação" para começar.</div>';
         return;
@@ -1538,6 +1865,35 @@ router.get('/', requireAuth, (req, res) => {
       }).join('');
     }
 
+    function renderMariaRuntimeStatus() {
+      const status = document.getElementById('mariaRuntimeStatus');
+      if (!status) return;
+      const maria = (currentAutomations || []).find(a => a.id === 'aut-ai-chat' || a.name === 'Atendimento Inteligente com IA');
+      const allowedStages = (maria?.conditions?.allowedStageNames || []).map(stage => String(stage).trim().toLowerCase());
+      const scopeReady = maria &&
+        String(maria.conditions?.pipelineId || '').toLowerCase() === 'name:funil de vendas' &&
+        (maria.conditions?.requiredTags || []).some(tag => String(tag).toLowerCase() === 'contato inicial') &&
+        allowedStages.length === 2 &&
+        allowedStages.includes('contato inicial') &&
+        allowedStages.includes('primeiro contato (prioridade)') &&
+        String(maria.conditions?.stopAtStageName || '').toLowerCase() === 'lead';
+
+      status.classList.toggle('active', Boolean(globalAutomationActive && maria?.active && scopeReady));
+      if (!maria) {
+        status.innerHTML = '<span class="status-dot"></span> Automação não encontrada';
+      } else if (globalAutomationActive === null) {
+        status.innerHTML = '<span class="status-dot"></span> Verificando motor';
+      } else if (!globalAutomationActive) {
+        status.innerHTML = '<span class="status-dot"></span> Motor geral pausado';
+      } else if (!maria.active) {
+        status.innerHTML = '<span class="status-dot"></span> Automação da Maria pausada';
+      } else if (!scopeReady) {
+        status.innerHTML = '<span class="status-dot"></span> Escopo requer revisão';
+      } else {
+        status.innerHTML = '<span class="status-dot"></span> Proteção operacional ativa';
+      }
+    }
+
     async function toggleAutoActive(id, active) {
       try {
         await fetch(API_BASE + '/automations/' + id + '/toggle', {
@@ -1570,6 +1926,9 @@ router.get('/', requireAuth, (req, res) => {
     }
 
     function selectAction(actionType) {
+      if (!builderActionNodes.length) resetBuilderActions(actionType);
+      syncSelectedActionFields();
+      builderActionNodes[selectedActionIndex].type = actionType;
       document.getElementById('actionType').value = actionType;
       document.querySelectorAll('[id^="actCard_"]').forEach(el => el.classList.remove('selected'));
       const active = document.getElementById('actCard_' + actionType);
@@ -1585,7 +1944,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoName').value = '';
       document.getElementById('autoDesc').value = '';
       selectTrigger('message_add');
-      selectAction('ai_chat');
+      resetBuilderActions('ai_chat');
       document.getElementById('autoPipeline').value = defaultPipelineId || 'all';
       updateStagesDropdown();
       document.getElementById('autoExcludedTags').value = 'Atendimento Humano, Nao Perturbe';
@@ -1600,6 +1959,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoAllowAll').checked = false;
       ensureStopStageOption('Lead');
       setProtectedStageScope([]);
+      syncSelectedActionFields();
       document.getElementById('autoModal').style.display = 'flex';
       renderAutomationCanvas();
     }
@@ -1621,12 +1981,10 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoRequiredTags').value = (a.conditions?.requiredTags || []).join(', ');
       document.getElementById('autoKeywords').value = a.conditions?.keywordMatch || '';
       
-      const action = a.actions?.[0] || {};
-      selectAction(action.type || 'ai_chat');
-      document.getElementById('templateText').value = action.templateText || '';
-      document.getElementById('aiCustomPrompt').value = action.customPrompt || '';
-      document.getElementById('actionAddTag').value = action.addTagOnSuccess || '';
-      document.getElementById('actionRemoveTag').value = action.removeTagOnSuccess || '';
+      builderActionNodes = (a.actions?.length ? a.actions : [{ type: 'ai_chat' }])
+        .map(action => createBuilderAction(action.type || 'ai_chat', action));
+      selectedActionIndex = 0;
+      loadSelectedActionFields();
       document.getElementById('autoPriority').value = String(a.priority || 0);
       document.getElementById('autoStopAfterMatch').checked = a.stopAfterMatch === true;
       document.getElementById('autoAllowAll').checked = a.conditions?.allowAllLeads === true;
@@ -1656,6 +2014,7 @@ router.get('/', requireAuth, (req, res) => {
     }
 
     async function saveAutomationFromModal() {
+      syncSelectedActionFields();
       const name = document.getElementById('autoName').value.trim();
       if (!name) {
         alert('Por favor, informe o nome da automação.');
@@ -1687,19 +2046,17 @@ router.get('/', requireAuth, (req, res) => {
         stopAfterMatch: document.getElementById('autoStopAfterMatch').checked,
         trigger: document.getElementById('autoTrigger').value,
         conditions,
-        actions: [
-          {
-            type: document.getElementById('actionType').value,
-            templateText: document.getElementById('templateText').value.trim(),
-            useCustomPrompt: Boolean(document.getElementById('aiCustomPrompt').value.trim()),
-            customPrompt: document.getElementById('aiCustomPrompt').value.trim(),
-            sendChannel: 'whatsapp_uazapi',
-            addTagOnSuccess: document.getElementById('actionAddTag').value.trim(),
-            removeTagOnSuccess: document.getElementById('actionRemoveTag').value.trim(),
+        actions: builderActionNodes.map(action => ({
+            type: action.type,
+            templateText: action.templateText || '',
+            useCustomPrompt: Boolean(action.customPrompt),
+            customPrompt: action.customPrompt || '',
+            sendChannel: action.sendChannel || 'whatsapp_uazapi',
+            addTagOnSuccess: action.addTagOnSuccess || '',
+            removeTagOnSuccess: action.removeTagOnSuccess || '',
             pipelineId: document.getElementById('autoPipeline').value,
             stageId: document.getElementById('autoStage').value,
-          }
-        ]
+          }))
       };
 
       try {
@@ -1996,6 +2353,7 @@ router.get('/', requireAuth, (req, res) => {
     }
 
     function updateGlobalUI(active) {
+      globalAutomationActive = active;
       document.getElementById('globalAutomationToggle').checked = active;
       const icon = document.getElementById('globalSwitchIcon');
       const title = document.getElementById('globalSwitchTitle');
@@ -2011,6 +2369,7 @@ router.get('/', requireAuth, (req, res) => {
         title.textContent = 'Motor de Automações Pausado';
         desc.textContent = 'Todas as automações estão temporariamente suspensas.';
       }
+      renderMariaRuntimeStatus();
     }
 
     // ===== EXECUÇÕES & LOGS =====
