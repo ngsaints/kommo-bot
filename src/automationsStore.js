@@ -13,79 +13,41 @@ if (!fs.existsSync(DATA_DIR)) {
 }
 
 function getDefaultAutomations() {
-  return [
-    {
-      id: 'aut-default-ia',
-      name: 'Atendimento Inteligente com IA',
-      description: 'Responde automaticamente leads que enviarem mensagens pelo WhatsApp utilizando a base de conhecimento e IA.',
-      active: true,
-      trigger: 'message_add', // message_add, lead_add, lead_stage_change, lead_tag_added
+  return [];
+}
+
+export function migrateAutomationSafety(automations) {
+  return automations.map(automation => {
+    if (!['aut-default-ia', 'aut-transfer-human'].includes(automation.id)) return automation;
+
+    const requiredTags = Array.isArray(automation.conditions?.requiredTags)
+      ? automation.conditions.requiredTags
+      : [];
+    const hasInitialContact = requiredTags.some(tag =>
+      String(tag || '').trim().toLowerCase() === 'contato inicial'
+    );
+
+    return {
+      ...automation,
+      priority: automation.id === 'aut-transfer-human' ? 100 : 10,
+      stopAfterMatch: automation.id === 'aut-transfer-human',
       conditions: {
-        pipelineId: 'all',
-        stageId: 'all',
-        requiredTags: [],
-        excludedTags: ['Atendimento Humano', 'Nao Perturbe', 'Sem IA'],
-        messageTypes: ['text', 'audio', 'image'],
-        keywordMatch: '', // vazio = qualquer mensagem
+        ...(automation.conditions || {}),
+        requiredTags: hasInitialContact ? requiredTags : [...requiredTags, 'Contato Inicial'],
+        allowAllLeads: false,
       },
-      actions: [
-        {
-          type: 'ai_chat',
-          useCustomPrompt: false,
-          customPrompt: '',
-          sendChannel: 'whatsapp_uazapi',
-          addTagOnSuccess: 'Em Atendimento IA',
-          removeTagOnSuccess: '',
-        }
-      ],
-      stats: {
-        executionsCount: 0,
-        successCount: 0,
-        lastRun: null,
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    },
-    {
-      id: 'aut-transfer-human',
-      name: 'Transbordo para Atendimento Humano',
-      description: 'Identifica quando um lead solicita atendente humano ou manifesta insatisfação e atualiza as tags no CRM.',
-      active: true,
-      trigger: 'message_add',
-      conditions: {
-        pipelineId: 'all',
-        stageId: 'all',
-        requiredTags: [],
-        excludedTags: ['Atendimento Humano'],
-        messageTypes: ['text'],
-        keywordMatch: 'humano,atendente,gerente,falar com pessoa,responsavel,reclamacao,suporte humano',
-      },
-      actions: [
-        {
-          type: 'send_template',
-          templateText: 'Entendido! Estou transferindo seu atendimento para um de nossos atendentes humanos. Em instantes entraremos em contato!',
-          sendChannel: 'whatsapp_uazapi',
-          addTagOnSuccess: 'Atendimento Humano',
-          removeTagOnSuccess: 'Em Atendimento IA',
-        }
-      ],
-      stats: {
-        executionsCount: 0,
-        successCount: 0,
-        lastRun: null,
-      },
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    }
-  ];
+    };
+  });
 }
 
 export function readAutomations() {
   try {
     if (fs.existsSync(AUTOMATIONS_FILE)) {
       const data = JSON.parse(fs.readFileSync(AUTOMATIONS_FILE, 'utf8'));
-      if (Array.isArray(data) && data.length > 0) {
-        return data;
+      if (Array.isArray(data)) {
+        const migrated = migrateAutomationSafety(data);
+        if (JSON.stringify(migrated) !== JSON.stringify(data)) writeAutomations(migrated);
+        return migrated;
       }
     }
   } catch (err) {
@@ -137,6 +99,8 @@ export function saveAutomation(data) {
     name: data.name || 'Nova Automação',
     description: data.description || '',
     active: data.active !== false,
+    priority: Number.isFinite(Number(data.priority)) ? Number(data.priority) : 0,
+    stopAfterMatch: data.stopAfterMatch === true,
     trigger: data.trigger || 'message_add',
     conditions: {
       pipelineId: data.conditions?.pipelineId || 'all',
@@ -145,6 +109,7 @@ export function saveAutomation(data) {
       excludedTags: Array.isArray(data.conditions?.excludedTags) ? data.conditions.excludedTags : [],
       messageTypes: Array.isArray(data.conditions?.messageTypes) ? data.conditions.messageTypes : ['text', 'audio', 'image'],
       keywordMatch: data.conditions?.keywordMatch || '',
+      allowAllLeads: data.conditions?.allowAllLeads === true,
     },
     actions: Array.isArray(data.actions) && data.actions.length > 0 ? data.actions : [
       {

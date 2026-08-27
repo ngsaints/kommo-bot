@@ -4,11 +4,15 @@
     "name": "Atendimento Inteligente com IA",
     "description": "Responde automaticamente leads que enviarem mensagens pelo WhatsApp utilizando a base de conhecimento e IA.",
     "active": true,
+    "priority": 10,
+    "stopAfterMatch": false,
     "trigger": "message_add",
     "conditions": {
       "pipelineId": "all",
       "stageId": "all",
-      "requiredTags": [],
+      "requiredTags": [
+        "Contato Inicial"
+      ],
       "excludedTags": [
         "Atendimento Humano",
         "Nao Perturbe",
@@ -19,7 +23,8 @@
         "audio",
         "image"
       ],
-      "keywordMatch": ""
+      "keywordMatch": "",
+      "allowAllLeads": false
     },
     "actions": [
       {
@@ -44,18 +49,23 @@
     "name": "Transbordo para Atendimento Humano",
     "description": "Identifica quando um lead solicita atendente humano ou manifesta insatisfação e atualiza as tags no CRM.",
     "active": true,
+    "priority": 100,
+    "stopAfterMatch": true,
     "trigger": "message_add",
     "conditions": {
       "pipelineId": "all",
       "stageId": "all",
-      "requiredTags": [],
+      "requiredTags": [
+        "Contato Inicial"
+      ],
       "excludedTags": [
         "Atendimento Humano"
       ],
       "messageTypes": [
         "text"
       ],
-      "keywordMatch": "humano,atendente,gerente,falar com pessoa,responsavel,reclamacao,suporte humano"
+      "keywordMatch": "humano,atendente,gerente,falar com pessoa,responsavel,reclamacao,suporte humano",
+      "allowAllLeads": false
     },
     "actions": [
       {

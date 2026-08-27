@@ -4,80 +4,8 @@ import { getAiResponse } from './agent.js';
 import { addExecution, addLog } from './logger.js';
 import { readAutomationState } from './dashboard.js';
 import { readAutomations, recordAutomationRun } from './automationsStore.js';
+import { evaluateConditions } from './automationEvaluator.js';
 import axios from 'axios';
-
-/**
- * Normaliza tags do lead para comparação fácil (minúsculas, sem espaços extras)
- */
-function getLeadTagNames(lead) {
-  const tags = lead?._embedded?.tags || [];
-  return tags.map(t => (t.name || '').trim().toLowerCase()).filter(Boolean);
-}
-
-/**
- * Avalia se o lead atende a todas as condições de uma automação
- */
-function evaluateConditions(automation, context) {
-  const { lead, text, messageType } = context;
-  const conds = automation.conditions || {};
-
-  // 1. Filtro de Funil (Pipeline)
-  if (conds.pipelineId && conds.pipelineId !== 'all') {
-    if (Number(lead?.pipeline_id) !== Number(conds.pipelineId)) {
-      return false;
-    }
-  }
-
-  // 2. Filtro de Etapa (Stage / Status)
-  if (conds.stageId && conds.stageId !== 'all') {
-    if (Number(lead?.status_id) !== Number(conds.stageId)) {
-      return false;
-    }
-  }
-
-  const leadTags = getLeadTagNames(lead);
-
-  // 3. Tags Obrigatórias (todas devem existir)
-  if (Array.isArray(conds.requiredTags) && conds.requiredTags.length > 0) {
-    for (const reqTag of conds.requiredTags) {
-      const normalized = (reqTag || '').trim().toLowerCase();
-      if (normalized && !leadTags.includes(normalized)) {
-        return false;
-      }
-    }
-  }
-
-  // 4. Tags Bloqueadas / Excluídas (nenhuma pode existir)
-  if (Array.isArray(conds.excludedTags) && conds.excludedTags.length > 0) {
-    for (const excTag of conds.excludedTags) {
-      const normalized = (excTag || '').trim().toLowerCase();
-      if (normalized && leadTags.includes(normalized)) {
-        return false;
-      }
-    }
-  }
-
-  // 5. Tipo de Mensagem
-  if (Array.isArray(conds.messageTypes) && conds.messageTypes.length > 0) {
-    if (messageType && !conds.messageTypes.includes(messageType)) {
-      return false;
-    }
-  }
-
-  // 6. Palavras-chave no texto
-  if (conds.keywordMatch && conds.keywordMatch.trim()) {
-    const rawKeywords = conds.keywordMatch.split(',').map(k => k.trim().toLowerCase()).filter(Boolean);
-    if (rawKeywords.length > 0) {
-      const lowerText = (text || '').toLowerCase();
-      const hasMatch = rawKeywords.some(keyword => lowerText.includes(keyword));
-      if (!hasMatch) {
-        return false;
-      }
-    }
-  }
-
-  return true;
-}
 
 /**
  * Substitui variáveis dinâmicas em textos de template
@@ -270,7 +198,7 @@ export async function processKommoEvent(body, eventType) {
     if (a.trigger !== eventType && a.trigger !== 'all') return false;
     // Avaliação de condições e regras do Kommo
     return evaluateConditions(a, context);
-  });
+  }).sort((a, b) => Number(b.priority || 0) - Number(a.priority || 0));
 
   if (matchedAutomations.length === 0) {
     addLog('info', 'info', `Nenhuma regra de automacao aplicavel para o Lead ${entityId}`);
@@ -298,6 +226,10 @@ export async function processKommoEvent(body, eventType) {
 
       recordAutomationRun(automation.id, autoSuccess);
       if (!autoSuccess) finalStatus = 'error';
+      if (automation.stopAfterMatch === true) {
+        addLog('stop', 'info', `Fluxo encerrado pela automacao exclusiva: "${automation.name}"`);
+        break;
+      }
     } catch (err) {
       console.error(`Erro ao rodar automação ${automation.id}:`, err);
       recordAutomationRun(automation.id, false);

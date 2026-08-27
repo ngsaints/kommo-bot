@@ -98,29 +98,25 @@ export async function updateLeadStage(leadId, pipelineId, statusId) {
   return data;
 }
 
+export function buildTagMutation(operation, tagName) {
+  const field = operation === 'remove' ? 'tags_to_delete' : 'tags_to_add';
+  return {
+    _embedded: {
+      [field]: [{ name: tagName }],
+    },
+  };
+}
+
 export async function addTag(leadId, tagName) {
   if (!tagName) return;
-  const { data } = await api.patch(`/leads`, [{
-    id: Number(leadId),
-    _embedded: {
-      tags: [{ name: tagName }]
-    }
-  }]);
+  const { data } = await api.patch(`/leads/${Number(leadId)}`, buildTagMutation('add', tagName));
   return data;
 }
 
 export async function removeTag(leadId, tagName) {
   if (!tagName) return;
   try {
-    const lead = await getLead(leadId);
-    const existingTags = lead._embedded?.tags || [];
-    const remainingTags = existingTags.filter(t => t.name !== tagName).map(t => ({ id: t.id, name: t.name }));
-    const { data } = await api.patch(`/leads`, [{
-      id: Number(leadId),
-      _embedded: {
-        tags: remainingTags
-      }
-    }]);
+    const { data } = await api.patch(`/leads/${Number(leadId)}`, buildTagMutation('remove', tagName));
     return data;
   } catch (err) {
     console.error(`Erro ao remover tag ${tagName} do lead ${leadId}:`, err.message);
