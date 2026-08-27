@@ -313,70 +313,6 @@ router.get('/', requireAuth, (req, res) => {
     }
     .btn-create:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
-    /* Maria operational flow */
-    .maria-flow-panel {
-      background: var(--card-bg); border: 1px solid var(--border); border-radius: 14px;
-      margin-bottom: 24px; overflow: hidden; box-shadow: 0 1px 2px rgba(15,23,42,.035);
-    }
-    .maria-flow-header {
-      padding: 18px 20px; display: flex; align-items: flex-start; justify-content: space-between;
-      gap: 18px; border-bottom: 1px solid var(--border); background: #fff;
-    }
-    .maria-flow-heading { display: flex; align-items: flex-start; gap: 12px; }
-    .maria-flow-icon {
-      width: 38px; height: 38px; flex: 0 0 38px; border-radius: 10px; display: flex;
-      align-items: center; justify-content: center; color: var(--primary); background: var(--primary-soft);
-      border: 1px solid var(--primary-border);
-    }
-    .maria-flow-heading h2 { font-size: 16px; font-weight: 700; color: var(--text-main); }
-    .maria-flow-heading p { margin-top: 4px; font-size: 12px; line-height: 1.45; color: var(--text-muted); }
-    .flow-runtime-status {
-      display: inline-flex; align-items: center; gap: 7px; flex-shrink: 0; padding: 7px 10px;
-      border-radius: 8px; border: 1px solid var(--border); background: #f8fafc;
-      color: #475569; font-size: 11px; font-weight: 700;
-    }
-    .flow-runtime-status .status-dot { background: #94a3b8; }
-    .flow-runtime-status.active { color: #166534; background: #f0fdf4; border-color: #bbf7d0; }
-    .flow-runtime-status.active .status-dot { background: var(--success); }
-    .maria-flow-body { padding: 20px; }
-    .maria-flow-label {
-      display: block; margin-bottom: 10px; font-size: 10px; font-weight: 700; color: #64748b;
-      text-transform: uppercase; letter-spacing: .08em;
-    }
-    .maria-stage-flow { display: grid; grid-template-columns: 1fr 28px 1fr 44px 1fr; align-items: stretch; }
-    .maria-stage {
-      min-width: 0; padding: 14px; border: 1px solid var(--border); border-radius: 11px; background: #f8fafc;
-    }
-    .maria-stage.allowed { border-color: var(--primary-border); background: var(--primary-soft); }
-    .maria-stage-stop { border-color: #fecaca; background: #fef2f2; }
-    .maria-stage-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
-    .maria-stage-index { font-size: 10px; font-weight: 700; color: #94a3b8; }
-    .maria-stage-state {
-      padding: 3px 6px; border-radius: 5px; font-size: 9px; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .04em; color: var(--primary); background: #fff; border: 1px solid var(--primary-border);
-    }
-    .maria-stage-stop .maria-stage-state { color: #991b1b; border-color: #fecaca; }
-    .maria-stage strong { display: block; font-size: 13px; color: var(--text-main); }
-    .maria-stage p { margin-top: 5px; font-size: 10px; color: var(--text-muted); line-height: 1.4; }
-    .maria-flow-arrow { display: flex; align-items: center; justify-content: center; color: #94a3b8; font-size: 13px; }
-    .maria-stop-divider { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; }
-    .maria-stop-divider i { color: var(--danger); font-size: 15px; }
-    .maria-stop-divider span { font-size: 8px; font-weight: 700; color: #991b1b; text-transform: uppercase; text-align: center; }
-    .flow-facts {
-      display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin-top: 14px;
-    }
-    .flow-fact { padding: 11px 12px; border-radius: 9px; background: #f8fafc; border: 1px solid #f1f5f9; }
-    .flow-fact span { display: block; font-size: 9px; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: .05em; }
-    .flow-fact strong { display: block; margin-top: 4px; font-size: 11px; color: #334155; line-height: 1.35; }
-    .implementation-progress { margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
-    .progress-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
-    .progress-step { position: relative; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: #fff; }
-    .progress-step.done { border-color: #bbf7d0; background: #f0fdf4; }
-    .progress-step-status { display: flex; align-items: center; gap: 6px; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: #64748b; }
-    .progress-step.done .progress-step-status { color: #166534; }
-    .progress-step strong { display: block; margin-top: 7px; font-size: 11px; color: var(--text-main); }
-    .progress-step p { margin-top: 4px; font-size: 10px; line-height: 1.4; color: var(--text-muted); }
-
     /* Automations Grid */
     .automations-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 20px; }
     .auto-card {
@@ -767,11 +703,6 @@ router.get('/', requireAuth, (req, res) => {
       .workflow-drop-zone { width: 100%; min-width: 100%; height: 32px; min-height: 32px; margin: 3px 0; }
       .workflow-drop-zone:before { left: 50%; right: auto; top: 0; bottom: 0; width: 2px; height: auto; }
       .workflow-drop-zone.drop-ready, .workflow-drop-zone:hover { width: 100%; min-width: 100%; height: 48px; }
-      .maria-flow-header { flex-direction: column; }
-      .maria-stage-flow { grid-template-columns: 1fr; }
-      .maria-flow-arrow { min-height: 25px; transform: rotate(90deg); }
-      .maria-stop-divider { min-height: 42px; }
-      .flow-facts, .progress-grid { grid-template-columns: 1fr 1fr; }
       .builder-quick-start { align-items: flex-start; flex-direction: column; }
       .automation-presets { justify-content: flex-start; }
       .visual-options-grid { grid-template-columns: 1fr; }
@@ -853,74 +784,6 @@ router.get('/', requireAuth, (req, res) => {
 
     <!-- TAB 1: AUTOMAÇÕES -->
     <div id="tab-automations" class="tab-content active">
-      <section class="maria-flow-panel" aria-labelledby="mariaFlowTitle">
-        <div class="maria-flow-header">
-          <div class="maria-flow-heading">
-            <div class="maria-flow-icon"><i class="fas fa-route"></i></div>
-            <div>
-              <h2 id="mariaFlowTitle">Fluxo operacional da Maria</h2>
-              <p>Visão fiel do escopo implementado para a automação <strong>Atendimento Inteligente com IA</strong>.</p>
-            </div>
-          </div>
-          <span class="flow-runtime-status" id="mariaRuntimeStatus"><span class="status-dot"></span> Verificando automação</span>
-        </div>
-        <div class="maria-flow-body">
-          <span class="maria-flow-label">Onde a Maria pode responder</span>
-          <div class="maria-stage-flow">
-            <article class="maria-stage allowed">
-              <div class="maria-stage-top"><span class="maria-stage-index">FASE 01</span><span class="maria-stage-state">Permitida</span></div>
-              <strong>Contato Inicial</strong>
-              <p>O Kommo cria a tag; a integração apenas confere a presença dela.</p>
-            </article>
-            <div class="maria-flow-arrow"><i class="fas fa-arrow-right"></i></div>
-            <article class="maria-stage allowed">
-              <div class="maria-stage-top"><span class="maria-stage-index">FASE 02</span><span class="maria-stage-state">Permitida</span></div>
-              <strong>Primeiro Contato (Prioridade)</strong>
-              <p>Última etapa em que a Maria pode conversar com o lead.</p>
-            </article>
-            <div class="maria-stop-divider"><i class="fas fa-shield-halved"></i><span>Barreira<br>da IA</span></div>
-            <article class="maria-stage maria-stage-stop">
-              <div class="maria-stage-top"><span class="maria-stage-index">A PARTIR DAQUI</span><span class="maria-stage-state">Bloqueada</span></div>
-              <strong>Lead e fases seguintes</strong>
-              <p>A Maria não responde, mesmo que a tag Contato Inicial permaneça no contato.</p>
-            </article>
-          </div>
-
-          <div class="flow-facts">
-            <div class="flow-fact"><span>Gatilho</span><strong>Nova mensagem no WhatsApp</strong></div>
-            <div class="flow-fact"><span>Funil obrigatório</span><strong>Funil de vendas</strong></div>
-            <div class="flow-fact"><span>Tag obrigatória</span><strong>Contato Inicial</strong></div>
-            <div class="flow-fact"><span>Política segura</span><strong>Sem funil, fase ou tag: não responde</strong></div>
-          </div>
-
-          <div class="implementation-progress">
-            <span class="maria-flow-label">Andamento do plano de ação</span>
-            <div class="progress-grid">
-              <article class="progress-step done">
-                <span class="progress-step-status"><i class="fas fa-circle-check"></i> Implementado</span>
-                <strong>1. Gatilho protegido</strong>
-                <p>Valida funil, tag e lista explícita de fases permitidas.</p>
-              </article>
-              <article class="progress-step">
-                <span class="progress-step-status"><i class="far fa-clock"></i> Próxima etapa</span>
-                <strong>2. Preencher o card</strong>
-                <p>Gravar nome, modalidade, experiência e objetivo pela API do Kommo.</p>
-              </article>
-              <article class="progress-step">
-                <span class="progress-step-status"><i class="far fa-clock"></i> Próxima etapa</span>
-                <strong>3. Qualificar e avançar</strong>
-                <p>Adicionar Lead Qualificado e mover após validar os campos mínimos.</p>
-              </article>
-              <article class="progress-step">
-                <span class="progress-step-status"><i class="far fa-clock"></i> Próxima etapa</span>
-                <strong>4. Concluir agenda</strong>
-                <p>Persistir a reserva e só então avançar para Experimental Agendado.</p>
-              </article>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <div class="section-toolbar">
         <div class="section-title">
           <h2>Regras de Automação</h2>
@@ -1256,7 +1119,7 @@ router.get('/', requireAuth, (req, res) => {
             <div class="protected-scope" id="protectedScopeNotice">
               <span class="protected-scope-icon"><i class="fas fa-shield-halved"></i></span>
               <div>
-                <strong>Escopo protegido da Maria</strong>
+                <strong>Escopo protegido do Atendimento Inteligente com IA</strong>
                 <p id="protectedScopeText"></p>
               </div>
             </div>
@@ -1351,7 +1214,7 @@ router.get('/', requireAuth, (req, res) => {
       <div class="modal-footer">
         <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
         <button type="button" class="btn-create" onclick="saveAutomationFromModal()">
-          <i class="fas fa-check"></i> Salvar e Ativar Automação
+          <i class="fas fa-check"></i> Salvar Automação (Pausada)
         </button>
       </div>
     </div>
@@ -1409,7 +1272,6 @@ router.get('/', requireAuth, (req, res) => {
     const API_BASE = '/home/workflows/api';
     const START_TIME = Date.now();
     let currentAutomations = [];
-    let globalAutomationActive = null;
     let kommoPipelines = [];
 
     // Stage colors palette
@@ -1650,7 +1512,16 @@ router.get('/', requireAuth, (req, res) => {
       if (!flow) return;
       const triggerType = document.getElementById('autoTrigger').value || 'message_add';
       const trigger = AUTOMATION_NODE_CATALOG.trigger[triggerType] || AUTOMATION_NODE_CATALOG.trigger.message_add;
-      const conditionSummary = getConditionSummary();
+      const pipeline = document.getElementById('autoPipeline');
+      const stage = document.getElementById('autoStage');
+      const pipelineLabel = pipeline?.options[pipeline.selectedIndex]?.text || 'Todos os funis';
+      const stageLabel = stage?.options[stage.selectedIndex]?.text || 'Todas as etapas';
+      const requiredTags = document.getElementById('autoRequiredTags').value.trim();
+      const blockedTags = document.getElementById('autoExcludedTags').value.trim();
+      const keywords = document.getElementById('autoKeywords').value.trim();
+      const allowedStages = document.getElementById('autoAllowedStageNames').value
+        .split('|').map(value => value.trim()).filter(Boolean);
+      const stopAtStage = document.getElementById('autoStopAtStage').value;
 
       function nodeHtml(kind, eyebrow, title, summary, icon, sectionId) {
         const selected = selectedKind === kind ? ' selected' : '';
@@ -1685,10 +1556,33 @@ router.get('/', requireAuth, (req, res) => {
       });
       actionsHtml += dropZoneHtml(builderActionNodes.length);
 
+      const conditionNodes = [];
+      conditionNodes.push(nodeHtml('condition', 'Validar funil', pipelineLabel, pipeline?.value === 'all' ? 'Qualquer pipeline confirmado' : 'O lead precisa estar neste funil', 'fa-filter', 'configConditions'));
+      if (stage?.value !== 'all') {
+        conditionNodes.push(nodeHtml('condition', 'Validar etapa', stageLabel, 'Somente esta etapa específica', 'fa-columns', 'configConditions'));
+      }
+      if (requiredTags) {
+        conditionNodes.push(nodeHtml('condition', 'Exigir tag', requiredTags, 'A tag precisa vir do Kommo', 'fa-tag', 'configRules'));
+      }
+      if (blockedTags) {
+        conditionNodes.push(nodeHtml('condition', 'Bloquear tags', blockedTags, 'Interrompe o fluxo ao encontrar uma delas', 'fa-ban', 'configRules'));
+      }
+      if (allowedStages.length) {
+        conditionNodes.push(nodeHtml('condition', 'Fases permitidas', allowedStages.join(' + '), 'Fora destas fases a automação não responde', 'fa-shield-halved', 'configConditions'));
+      }
+      if (stopAtStage) {
+        conditionNodes.push(nodeHtml('condition', 'Barreira de saída', stopAtStage + ' e fases seguintes', 'A automação é desligada deste ponto em diante', 'fa-stop-circle', 'configConditions'));
+      }
+      if (keywords) {
+        conditionNodes.push(nodeHtml('condition', 'Palavras-chave', keywords, 'Executa somente quando o texto corresponder', 'fa-key', 'configRules'));
+      }
+
+      const conditionsHtml = conditionNodes.join('<div class="workflow-connector"></div>');
+
       flow.innerHTML =
         nodeHtml('trigger', 'Quando acontecer', trigger.title, trigger.summary, trigger.icon, 'configTrigger') +
         '<div class="workflow-connector"></div>' +
-        nodeHtml('condition', 'Somente se', 'Filtros e condições', conditionSummary, 'fa-filter', 'configConditions') +
+        conditionsHtml +
         actionsHtml;
     }
 
@@ -1798,7 +1692,6 @@ router.get('/', requireAuth, (req, res) => {
 
     function renderAutomationsGrid() {
       const grid = document.getElementById('automationsGrid');
-      renderMariaRuntimeStatus();
       if (!currentAutomations || currentAutomations.length === 0) {
         grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-muted);">Nenhuma automação cadastrada. Clique em "+ Nova Automação" para começar.</div>';
         return;
@@ -1863,35 +1756,6 @@ router.get('/', requireAuth, (req, res) => {
           </div>
         \`;
       }).join('');
-    }
-
-    function renderMariaRuntimeStatus() {
-      const status = document.getElementById('mariaRuntimeStatus');
-      if (!status) return;
-      const maria = (currentAutomations || []).find(a => a.id === 'aut-ai-chat' || a.name === 'Atendimento Inteligente com IA');
-      const allowedStages = (maria?.conditions?.allowedStageNames || []).map(stage => String(stage).trim().toLowerCase());
-      const scopeReady = maria &&
-        String(maria.conditions?.pipelineId || '').toLowerCase() === 'name:funil de vendas' &&
-        (maria.conditions?.requiredTags || []).some(tag => String(tag).toLowerCase() === 'contato inicial') &&
-        allowedStages.length === 2 &&
-        allowedStages.includes('contato inicial') &&
-        allowedStages.includes('primeiro contato (prioridade)') &&
-        String(maria.conditions?.stopAtStageName || '').toLowerCase() === 'lead';
-
-      status.classList.toggle('active', Boolean(globalAutomationActive && maria?.active && scopeReady));
-      if (!maria) {
-        status.innerHTML = '<span class="status-dot"></span> Automação não encontrada';
-      } else if (globalAutomationActive === null) {
-        status.innerHTML = '<span class="status-dot"></span> Verificando motor';
-      } else if (!globalAutomationActive) {
-        status.innerHTML = '<span class="status-dot"></span> Motor geral pausado';
-      } else if (!maria.active) {
-        status.innerHTML = '<span class="status-dot"></span> Automação da Maria pausada';
-      } else if (!scopeReady) {
-        status.innerHTML = '<span class="status-dot"></span> Escopo requer revisão';
-      } else {
-        status.innerHTML = '<span class="status-dot"></span> Proteção operacional ativa';
-      }
     }
 
     async function toggleAutoActive(id, active) {
@@ -2353,7 +2217,6 @@ router.get('/', requireAuth, (req, res) => {
     }
 
     function updateGlobalUI(active) {
-      globalAutomationActive = active;
       document.getElementById('globalAutomationToggle').checked = active;
       const icon = document.getElementById('globalSwitchIcon');
       const title = document.getElementById('globalSwitchTitle');
@@ -2369,7 +2232,6 @@ router.get('/', requireAuth, (req, res) => {
         title.textContent = 'Motor de Automações Pausado';
         desc.textContent = 'Todas as automações estão temporariamente suspensas.';
       }
-      renderMariaRuntimeStatus();
     }
 
     // ===== EXECUÇÕES & LOGS =====

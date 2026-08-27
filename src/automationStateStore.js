@@ -14,7 +14,8 @@ export function readAutomationState(filePath = DEFAULT_STATE_FILE) {
   } catch (err) {
     console.error('Erro ao ler estado do motor de automações:', err.message);
   }
-  return true;
+  // Falha fechada: em deploy novo ou sem volume persistente, o motor inicia pausado.
+  return false;
 }
 
 export function writeAutomationState(active, filePath = DEFAULT_STATE_FILE) {

@@ -109,7 +109,8 @@ export function saveAutomation(data) {
     id: 'aut-' + crypto.randomBytes(4).toString('hex'),
     name: data.name || 'Nova Automação',
     description: data.description || '',
-    active: data.active !== false,
+    // Novas regras só entram em operação quando forem ativadas explicitamente.
+    active: data.active === true,
     priority: Number.isFinite(Number(data.priority)) ? Number(data.priority) : 0,
     stopAfterMatch: data.stopAfterMatch === true,
     trigger: data.trigger || 'message_add',

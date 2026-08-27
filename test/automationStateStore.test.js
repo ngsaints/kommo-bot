@@ -5,11 +5,11 @@ import os from 'os';
 import path from 'path';
 import { readAutomationState, writeAutomationState } from '../src/automationStateStore.js';
 
-test('motor inicia ativo e mantém o estado salvo após nova leitura', () => {
+test('motor inicia pausado e mantém o estado salvo após nova leitura', () => {
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'kommo-state-'));
   const file = path.join(dir, 'automation-state.json');
   try {
-    assert.equal(readAutomationState(file), true);
+    assert.equal(readAutomationState(file), false);
     writeAutomationState(false, file);
     assert.equal(readAutomationState(file), false);
     writeAutomationState(true, file);
