@@ -64,124 +64,40 @@ router.get('/login', (req, res) => {
       color: #0f172a;
       padding: 20px;
     }
-    .login-container {
-      width: 100%;
-      max-width: 420px;
-    }
-    .brand-header {
-      text-align: center;
-      margin-bottom: 28px;
-    }
+    .login-container { width: 100%; max-width: 420px; }
+    .brand-header { text-align: center; margin-bottom: 28px; }
     .brand-icon {
-      width: 48px;
-      height: 48px;
-      background: #2563eb;
-      color: #ffffff;
-      border-radius: 12px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 22px;
-      margin-bottom: 12px;
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+      width: 48px; height: 48px; background: #2563eb; color: #ffffff;
+      border-radius: 12px; display: inline-flex; align-items: center; justify-content: center;
+      font-size: 22px; margin-bottom: 12px; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
-    .brand-header h1 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #0f172a;
-      letter-spacing: -0.02em;
-    }
-    .brand-header p {
-      font-size: 14px;
-      color: #64748b;
-      margin-top: 4px;
-    }
+    .brand-header h1 { font-size: 22px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em; }
+    .brand-header p { font-size: 14px; color: #64748b; margin-top: 4px; }
     .login-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px;
       box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.05), 0 8px 10px -6px rgba(15, 23, 42, 0.02);
       padding: 32px;
     }
-    .form-group {
-      margin-bottom: 20px;
-    }
-    .form-group label {
-      display: block;
-      font-size: 13px;
-      font-weight: 600;
-      color: #334155;
-      margin-bottom: 8px;
-    }
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-    .input-wrapper i {
-      position: absolute;
-      left: 14px;
-      color: #94a3b8;
-      font-size: 15px;
-    }
+    .form-group { margin-bottom: 20px; }
+    .form-group label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 8px; }
+    .input-wrapper { position: relative; display: flex; align-items: center; }
+    .input-wrapper i { position: absolute; left: 14px; color: #94a3b8; font-size: 15px; }
     .input-wrapper input {
-      width: 100%;
-      padding: 12px 14px 12px 40px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 14px;
-      color: #0f172a;
-      background: #ffffff;
-      outline: none;
-      transition: all 0.2s ease;
+      width: 100%; padding: 12px 14px 12px 40px; border: 1px solid #cbd5e1;
+      border-radius: 10px; font-size: 14px; color: #0f172a; background: #ffffff; outline: none; transition: all 0.2s ease;
     }
-    .input-wrapper input:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-    }
-    .input-wrapper input::placeholder {
-      color: #94a3b8;
-    }
+    .input-wrapper input:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12); }
     .btn-primary {
-      width: 100%;
-      padding: 12px 16px;
-      background: #2563eb;
-      color: #ffffff;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: background 0.2s ease, transform 0.1s ease;
+      width: 100%; padding: 12px 16px; background: #2563eb; color: #ffffff; border: none;
+      border-radius: 10px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex;
+      align-items: center; justify-content: center; gap: 8px; transition: background 0.2s ease;
     }
-    .btn-primary:hover {
-      background: #1d4ed8;
-    }
-    .btn-primary:active {
-      transform: scale(0.99);
-    }
+    .btn-primary:hover { background: #1d4ed8; }
     .error-alert {
-      background: #fef2f2;
-      border: 1px solid #fecaca;
-      color: #dc2626;
-      padding: 12px 14px;
-      border-radius: 10px;
-      font-size: 13px;
-      margin-bottom: 20px;
-      display: none;
-      align-items: center;
-      gap: 8px;
+      background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; padding: 12px 14px;
+      border-radius: 10px; font-size: 13px; margin-bottom: 20px; display: none; align-items: center; gap: 8px;
     }
-    .login-footer {
-      text-align: center;
-      margin-top: 24px;
-      font-size: 12px;
-      color: #94a3b8;
-    }
+    .login-footer { text-align: center; margin-top: 24px; font-size: 12px; color: #94a3b8; }
   </style>
 </head>
 <body>
@@ -217,9 +133,7 @@ router.get('/login', (req, res) => {
         </button>
       </form>
     </div>
-    <div class="login-footer">
-      Ambiente de Produção &bull; Conexão Segura
-    </div>
+    <div class="login-footer">Ambiente de Produção &bull; Conexão Segura</div>
   </div>
   <script>
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
@@ -228,16 +142,14 @@ router.get('/login', (req, res) => {
       const btn = f.querySelector('button');
       btn.disabled = true;
       btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i><span>Entrando...</span>';
-      
       try {
         const r = await fetch('/home/workflows/api/login', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username: f.username.value, password: f.password.value })
         });
-        if (r.ok) {
-          window.location.href = '/home/workflows';
-        } else {
+        if (r.ok) window.location.href = '/home/workflows';
+        else {
           document.getElementById('error').style.display = 'flex';
           btn.disabled = false;
           btn.innerHTML = '<span>Acessar Painel</span><i class="fas fa-arrow-right"></i>';
@@ -273,7 +185,7 @@ router.get('/logout', (req, res) => {
   res.redirect('/home/workflows/login');
 });
 
-// ===== DASHBOARD PRINCIPAL =====
+// ===== DASHBOARD PRINCIPAL (Interface Visual Moderna) =====
 router.get('/', requireAuth, (req, res) => {
   res.send(`<!DOCTYPE html>
 <html lang="pt-BR">
@@ -294,7 +206,7 @@ router.get('/', requireAuth, (req, res) => {
       --success: #16a34a;
       --danger: #dc2626;
       --warning: #d97706;
-      --radius: 12px;
+      --radius: 14px;
     }
     * { margin: 0; padding: 0; box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; }
     body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; }
@@ -315,8 +227,7 @@ router.get('/', requireAuth, (req, res) => {
     .header-brand { display: flex; align-items: center; gap: 12px; }
     .brand-icon {
       width: 38px; height: 38px; background: var(--primary); color: #fff;
-      border-radius: 10px; display: flex; align-items: center; justify-content: center;
-      font-size: 18px;
+      border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px;
     }
     .brand-title h1 { font-size: 17px; font-weight: 700; color: var(--text-main); line-height: 1.2; }
     .brand-title span { font-size: 12px; color: var(--text-muted); }
@@ -335,65 +246,31 @@ router.get('/', requireAuth, (req, res) => {
     .btn-logout:hover { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
 
     /* Navigation Bar / Tabs */
-    .tab-nav-wrapper {
-      background: var(--card-bg);
-      border-bottom: 1px solid var(--border);
-      padding: 0 32px;
-    }
-    .tab-nav {
-      max-width: 1300px;
-      margin: 0 auto;
-      display: flex;
-      gap: 24px;
-    }
+    .tab-nav-wrapper { background: var(--card-bg); border-bottom: 1px solid var(--border); padding: 0 32px; }
+    .tab-nav { max-width: 1300px; margin: 0 auto; display: flex; gap: 24px; }
     .tab-btn {
-      padding: 16px 4px;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
-      font-size: 14px;
-      font-weight: 600;
-      color: var(--text-muted);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
+      padding: 16px 4px; background: none; border: none; border-bottom: 2px solid transparent;
+      font-size: 14px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+      display: flex; align-items: center; gap: 8px; transition: all 0.2s ease;
     }
     .tab-btn:hover { color: var(--text-main); }
-    .tab-btn.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-    }
+    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
 
-    /* Container */
-    .main-container {
-      max-width: 1300px;
-      margin: 0 auto;
-      padding: 28px 32px;
-      width: 100%;
-      flex: 1;
-    }
-
+    /* Main Container */
+    .main-container { max-width: 1300px; margin: 0 auto; padding: 28px 32px; width: 100%; flex: 1; }
     .tab-content { display: none; }
     .tab-content.active { display: block; }
 
     /* Global Automation Switch */
     .master-switch-bar {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 16px 20px;
-      margin-bottom: 24px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 16px 20px; margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;
       box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     .switch-left { display: flex; align-items: center; gap: 14px; }
     .switch-icon {
-      width: 42px; height: 42px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; font-size: 18px;
+      width: 42px; height: 42px; border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 18px;
     }
     .switch-icon.active { background: #f0fdf4; color: var(--success); }
     .switch-icon.inactive { background: #fef2f2; color: var(--danger); }
@@ -415,226 +292,139 @@ router.get('/', requireAuth, (req, res) => {
     input:checked + .slider:before { transform: translateX(22px); }
 
     /* Action Toolbar */
-    .section-toolbar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 20px;
-    }
+    .section-toolbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
     .section-title h2 { font-size: 18px; font-weight: 700; color: var(--text-main); }
     .section-title p { font-size: 13px; color: var(--text-muted); margin-top: 2px; }
     .btn-create {
-      background: var(--primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 18px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      transition: background 0.2s ease;
+      background: var(--primary); color: #fff; border: none; border-radius: 10px;
+      padding: 11px 20px; font-size: 13px; font-weight: 600; cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px; transition: background 0.2s ease, transform 0.1s ease;
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
     }
-    .btn-create:hover { background: var(--primary-hover); }
+    .btn-create:hover { background: var(--primary-hover); transform: translateY(-1px); }
 
     /* Automations Grid */
-    .automations-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
-      gap: 20px;
-    }
+    .automations-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
     .auto-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 22px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); display: flex; flex-direction: column;
+      justify-content: space-between; transition: transform 0.15s ease, box-shadow 0.15s ease;
     }
-    .auto-card:hover {
-      box-shadow: 0 8px 16px -4px rgba(15, 23, 42, 0.06);
-      transform: translateY(-2px);
-    }
-    .auto-card-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      margin-bottom: 12px;
-    }
+    .auto-card:hover { box-shadow: 0 10px 20px -5px rgba(15, 23, 42, 0.08); transform: translateY(-2px); }
+    .auto-card-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 12px; }
     .auto-card-title h3 { font-size: 15px; font-weight: 700; color: var(--text-main); }
     .auto-card-title p { font-size: 13px; color: var(--text-muted); margin-top: 4px; line-height: 1.4; }
     
     .tags-container { display: flex; flex-wrap: wrap; gap: 6px; margin: 14px 0; }
     .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 11px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.02em;
+      display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 6px;
+      font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.02em;
     }
     .badge-trigger { background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; }
     .badge-action { background: #f5f3ff; color: #6d28d9; border: 1px solid #ede9fe; }
     .badge-condition { background: #f1f5f9; color: #475569; border: 1px solid #e2e8f0; }
 
     .auto-card-stats {
-      background: #f8fafc;
-      border-radius: 8px;
-      padding: 10px 12px;
-      display: flex;
-      justify-content: space-around;
-      margin: 12px 0;
-      border: 1px solid #f1f5f9;
+      background: #f8fafc; border-radius: 10px; padding: 12px; display: flex;
+      justify-content: space-around; margin: 14px 0; border: 1px solid #f1f5f9;
     }
     .stat-item { text-align: center; }
-    .stat-item .val { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .stat-item .val { font-size: 15px; font-weight: 700; color: var(--text-main); }
     .stat-item .lbl { font-size: 11px; color: var(--text-muted); margin-top: 2px; }
 
     .auto-card-footer {
-      border-top: 1px solid var(--border);
-      padding-top: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
+      border-top: 1px solid var(--border); padding-top: 14px; display: flex;
+      align-items: center; justify-content: space-between;
     }
     .card-actions { display: flex; gap: 8px; }
     .btn-icon {
-      background: none; border: 1px solid var(--border); border-radius: 6px;
-      padding: 6px 10px; font-size: 12px; color: var(--text-muted); cursor: pointer;
-      transition: all 0.2s ease;
+      background: #fff; border: 1px solid var(--border); border-radius: 8px;
+      padding: 7px 12px; font-size: 12px; color: var(--text-muted); cursor: pointer; transition: all 0.2s ease;
     }
     .btn-icon:hover { background: #f1f5f9; color: var(--text-main); }
     .btn-icon.delete:hover { background: #fef2f2; color: var(--danger); border-color: #fecaca; }
 
     /* Visual Pipelines Board */
-    .pipelines-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
-    }
+    .pipelines-grid { display: flex; flex-direction: column; gap: 24px; }
     .pipeline-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
     .pipeline-header {
       display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 20px; padding-bottom: 14px; border-bottom: 1px solid #f1f5f9;
     }
-    .pipeline-header-title { display: flex; align-items: center; gap: 10px; }
+    .pipeline-header-title { display: flex; align-items: center; gap: 12px; }
     .pipeline-header-title h3 { font-size: 17px; font-weight: 700; color: var(--text-main); }
     
     /* Horizontal Visual Kanban Flow */
     .stages-flow-wrapper {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      overflow-x: auto;
-      padding: 8px 0 16px 0;
+      display: flex; align-items: center; gap: 10px; overflow-x: auto; padding: 10px 0 16px 0;
     }
     .stage-flow-node {
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 14px 18px;
-      min-width: 170px;
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      border-top: 4px solid var(--primary);
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
+      padding: 16px 20px; min-width: 180px; flex: 1; display: flex; flex-direction: column;
+      gap: 6px; border-top: 4px solid var(--primary); box-shadow: 0 1px 3px rgba(0,0,0,0.03);
     }
-    .stage-node-title { font-size: 13px; font-weight: 700; color: var(--text-main); }
-    .stage-node-meta { font-size: 11px; color: var(--text-muted); }
-    .flow-arrow { color: #cbd5e1; font-size: 14px; flex-shrink: 0; }
+    .stage-node-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    .stage-node-meta { font-size: 11px; color: var(--text-muted); font-family: monospace; }
+    .flow-arrow { color: #cbd5e1; font-size: 16px; flex-shrink: 0; }
+
+    /* Visual Flow Step Cards inside Automation Builder Modal */
+    .flow-step-card {
+      background: #f8fafc; border: 1px solid var(--border); border-radius: 12px;
+      padding: 18px; margin-bottom: 18px;
+    }
+    .flow-step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .step-number {
+      width: 26px; height: 26px; border-radius: 50%; background: var(--primary); color: #fff;
+      display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700;
+    }
+    .flow-step-title { font-size: 14px; font-weight: 700; color: var(--text-main); }
+    
+    .visual-options-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+    .visual-choice-card {
+      background: #ffffff; border: 2px solid var(--border); border-radius: 10px;
+      padding: 14px; cursor: pointer; transition: all 0.2s ease; text-align: left;
+    }
+    .visual-choice-card:hover { border-color: #93c5fd; background: #eff6ff; }
+    .visual-choice-card.selected { border-color: var(--primary); background: #eff6ff; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.15); }
+    .visual-choice-icon { font-size: 20px; color: var(--primary); margin-bottom: 8px; }
+    .visual-choice-title { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 2px; }
+    .visual-choice-desc { font-size: 11px; color: var(--text-muted); line-height: 1.3; }
 
     /* Interactive Pipeline Modal Stages Builder */
     .stages-builder-list {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin: 14px 0;
-      max-height: 280px;
-      overflow-y: auto;
-      padding-right: 4px;
+      display: flex; flex-direction: column; gap: 10px; margin: 14px 0; max-height: 280px;
+      overflow-y: auto; padding-right: 4px;
     }
     .stage-builder-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px 12px;
+      display: flex; align-items: center; gap: 10px; background: #ffffff;
+      border: 1px solid var(--border); border-radius: 10px; padding: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);
     }
     .color-chip {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      cursor: pointer;
-      border: 2px solid #fff;
-      box-shadow: 0 0 0 1px #cbd5e1;
-      flex-shrink: 0;
+      width: 26px; height: 26px; border-radius: 6px; cursor: pointer; border: 2px solid #fff;
+      box-shadow: 0 0 0 1px #cbd5e1; flex-shrink: 0;
     }
-    .preset-templates-bar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 14px;
-    }
+    .preset-templates-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
     .preset-chip {
-      background: #eff6ff;
-      color: #1d4ed8;
-      border: 1px solid #dbeafe;
-      padding: 6px 12px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
+      background: #eff6ff; color: #1d4ed8; border: 1px solid #dbeafe; padding: 7px 14px;
+      border-radius: 20px; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s ease;
     }
     .preset-chip:hover { background: #dbeafe; }
 
     /* Live Preview Bar */
-    .live-preview-box {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 12px;
-      margin-top: 14px;
-    }
+    .live-preview-box { background: #ffffff; border: 1px solid var(--border); border-radius: 10px; padding: 14px; margin-top: 16px; }
 
-    /* Overview Stats Cards */
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
-    }
+    /* Stats Overview */
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 20px;
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 20px; display: flex; align-items: center; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     .stat-card-icon {
-      width: 46px; height: 46px; border-radius: 10px;
-      display: flex; align-items: center; justify-content: center; font-size: 20px;
+      width: 46px; height: 46px; border-radius: 10px; display: flex; align-items: center;
+      justify-content: center; font-size: 20px;
     }
     .stat-card-icon.blue { background: #eff6ff; color: #2563eb; }
     .stat-card-icon.green { background: #f0fdf4; color: #16a34a; }
@@ -645,16 +435,12 @@ router.get('/', requireAuth, (req, res) => {
 
     /* Standard Cards & Tables */
     .card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 24px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);
     }
     .card-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 18px; padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;
+      display: flex; align-items: center; justify-content: space-between; margin-bottom: 18px;
+      padding-bottom: 12px; border-bottom: 1px solid #f1f5f9;
     }
     .card-header h2 { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
 
@@ -669,8 +455,8 @@ router.get('/', requireAuth, (req, res) => {
     tr:last-child td { border-bottom: none; }
     
     .status-badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 600;
+      display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 20px;
+      font-size: 12px; font-weight: 600;
     }
     .status-badge.success { background: #f0fdf4; color: #16a34a; }
     .status-badge.error { background: #fef2f2; color: #dc2626; }
@@ -688,28 +474,27 @@ router.get('/', requireAuth, (req, res) => {
 
     /* Modal */
     .modal-backdrop {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(4px);
-      display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; padding: 20px;
     }
     .modal {
-      background: #fff; border-radius: 16px; max-width: 680px; width: 100%;
-      max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);
+      background: #fff; border-radius: 18px; max-width: 720px; width: 100%; max-height: 92vh;
+      overflow-y: auto; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
     }
     .modal-header {
-      padding: 20px 24px; border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; justify-content: space-between;
+      padding: 22px 26px; border-bottom: 1px solid var(--border); display: flex;
+      align-items: center; justify-content: space-between;
     }
     .modal-header h3 { font-size: 17px; font-weight: 700; }
     .btn-close { background: none; border: none; font-size: 18px; color: var(--text-muted); cursor: pointer; }
-    .modal-body { padding: 24px; }
+    .modal-body { padding: 26px; }
     .modal-footer {
-      padding: 16px 24px; border-top: 1px solid var(--border);
-      display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc; border-radius: 0 0 16px 16px;
+      padding: 18px 26px; border-top: 1px solid var(--border); display: flex;
+      justify-content: flex-end; gap: 12px; background: #f8fafc; border-radius: 0 0 18px 18px;
     }
     .btn-secondary {
-      background: #fff; border: 1px solid var(--border); border-radius: 8px;
-      padding: 10px 16px; font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer;
+      background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px 18px;
+      font-size: 13px; font-weight: 600; color: var(--text-muted); cursor: pointer;
     }
 
     /* Logs view */
@@ -997,103 +782,133 @@ router.get('/', requireAuth, (req, res) => {
 
   </main>
 
-  <!-- MODAL: CRIAR / EDITAR AUTOMAÇÃO -->
+  <!-- MODAL: CONSTRUTOR VISUAL DE AUTOMAÇÃO EM PASSOS -->
   <div class="modal-backdrop" id="autoModal">
     <div class="modal">
       <div class="modal-header">
-        <h3 id="modalTitle">Configurar Automação</h3>
+        <h3 id="modalTitle"><i class="fas fa-magic" style="color: var(--primary); margin-right: 8px;"></i> Construtor Visual de Automação</h3>
         <button class="btn-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
       </div>
       <div class="modal-body">
         <form id="automationForm">
           <input type="hidden" id="autoId">
+          <input type="hidden" id="autoTrigger" value="message_add">
+          <input type="hidden" id="actionType" value="ai_chat">
 
           <div class="form-group">
             <label for="autoName">Nome da Automação *</label>
-            <input type="text" id="autoName" class="form-control" placeholder="Ex: Atendimento Inicial Muay Thai" required>
+            <input type="text" id="autoName" class="form-control" placeholder="Ex: Atendimento Inteligente - Muay Thai Adulto" required>
           </div>
 
           <div class="form-group">
-            <label for="autoDesc">Descrição</label>
-            <input type="text" id="autoDesc" class="form-control" placeholder="Descreva brevemente o objetivo desta regra">
+            <label for="autoDesc">Descrição (opcional)</label>
+            <input type="text" id="autoDesc" class="form-control" placeholder="Ex: Responde automaticamente leads que chegam pelo WhatsApp">
           </div>
 
-          <div class="form-group">
-            <label for="autoTrigger">Gatilho no Kommo CRM *</label>
-            <select id="autoTrigger" class="form-control">
-              <option value="message_add">Nova Mensagem Recebida (message[add])</option>
-              <option value="lead_add">Novo Lead Criado (leads[add])</option>
-              <option value="lead_stage_change">Mudança de Etapa / Status no Funil (leads[status])</option>
-              <option value="lead_update">Atualização de Lead (leads[update])</option>
-            </select>
-          </div>
-
-          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
-            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-main);">
-              <i class="fas fa-filter" style="color: var(--primary);"></i> Filtros e Condições
-            </h4>
-            
-            <div class="form-group">
-              <label for="autoPipeline">Funil / Pipeline do Kommo</label>
-              <select id="autoPipeline" class="form-control" onchange="updateStagesDropdown()">
-                <option value="all">Todos os Funis</option>
-              </select>
+          <!-- PASSO 1: GATILHO VISUAL -->
+          <div class="flow-step-card">
+            <div class="flow-step-header">
+              <span class="step-number">1</span>
+              <span class="flow-step-title">Quando acontecer este evento no Kommo CRM:</span>
             </div>
-
-            <div class="form-group">
-              <label for="autoStage">Etapa / Status do Funil</label>
-              <select id="autoStage" class="form-control">
-                <option value="all">Todas as Etapas</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label for="autoRequiredTags">Tags Obrigatórias (separadas por vírgula)</label>
-              <input type="text" id="autoRequiredTags" class="form-control" placeholder="Ex: Em Atendimento IA, Novo Lead">
-            </div>
-
-            <div class="form-group">
-              <label for="autoExcludedTags">Tags Bloqueadas / Excluídas (separadas por vírgula)</label>
-              <input type="text" id="autoExcludedTags" class="form-control" placeholder="Ex: Atendimento Humano, Não Perturbe">
-            </div>
-
-            <div class="form-group">
-              <label for="autoKeywords">Palavras-chave no Texto (opcional)</label>
-              <input type="text" id="autoKeywords" class="form-control" placeholder="Ex: humano, atendente, precos (deixe vazio para qualquer mensagem)">
+            <div class="visual-options-grid">
+              <div class="visual-choice-card selected" id="trigCard_message_add" onclick="selectTrigger('message_add')">
+                <div class="visual-choice-icon"><i class="fas fa-comments"></i></div>
+                <div class="visual-choice-title">Nova Mensagem</div>
+                <div class="visual-choice-desc">Quando o lead enviar uma mensagem no WhatsApp</div>
+              </div>
+              <div class="visual-choice-card" id="trigCard_lead_add" onclick="selectTrigger('lead_add')">
+                <div class="visual-choice-icon"><i class="fas fa-user-plus"></i></div>
+                <div class="visual-choice-title">Novo Lead Criado</div>
+                <div class="visual-choice-desc">Quando um lead novo entrar no funil de vendas</div>
+              </div>
+              <div class="visual-choice-card" id="trigCard_lead_stage_change" onclick="selectTrigger('lead_stage_change')">
+                <div class="visual-choice-icon"><i class="fas fa-exchange-alt"></i></div>
+                <div class="visual-choice-title">Mudança de Etapa</div>
+                <div class="visual-choice-desc">Quando o lead for movido de fase no funil</div>
+              </div>
             </div>
           </div>
 
-          <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0;">
-            <h4 style="font-size: 13px; font-weight: 700; margin-bottom: 12px; color: var(--text-main);">
-              <i class="fas fa-bolt" style="color: var(--primary);"></i> Ação Principal
-            </h4>
-
-            <div class="form-group">
-              <label for="actionType">Tipo de Ação</label>
-              <select id="actionType" class="form-control" onchange="toggleActionFields()">
-                <option value="ai_chat">Resposta Inteligente com IA (OpenAI + Base de Conhecimento)</option>
-                <option value="send_template">Enviar Mensagem WhatsApp Fixa / Template</option>
-                <option value="change_stage">Apenas Mover de Etapa no Funil</option>
-                <option value="manage_tags">Apenas Atualizar Tags</option>
-              </select>
+          <!-- PASSO 2: FUNIL E ETAPAS -->
+          <div class="flow-step-card">
+            <div class="flow-step-header">
+              <span class="step-number">2</span>
+              <span class="flow-step-title">Em qual Funil (Pipeline) aplicar esta regra:</span>
             </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="autoPipeline">Funil / Pipeline</label>
+                <select id="autoPipeline" class="form-control" onchange="updateStagesDropdown()">
+                  <option value="all">Ambos os Funis Ativos</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="autoStage">Etapa Específica</label>
+                <select id="autoStage" class="form-control">
+                  <option value="all">Todas as Etapas</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
-            <div id="templateFields" style="display: none;">
-              <div class="form-group">
-                <label for="templateText">Mensagem do Template</label>
-                <textarea id="templateText" class="form-control" rows="3" placeholder="Olá {{name}}, recebemos sua mensagem! Em breve nossa equipe entrará em contato."></textarea>
-                <span style="font-size: 11px; color: var(--text-muted);">Variáveis disponíveis: {{name}}, {{first_name}}, {{phone}}, {{lead_id}}</span>
+          <!-- PASSO 3: AÇÃO PRINCIPAL -->
+          <div class="flow-step-card">
+            <div class="flow-step-header">
+              <span class="step-number">3</span>
+              <span class="flow-step-title">O que o sistema deve fazer automaticamente:</span>
+            </div>
+            <div class="visual-options-grid">
+              <div class="visual-choice-card selected" id="actCard_ai_chat" onclick="selectAction('ai_chat')">
+                <div class="visual-choice-icon"><i class="fas fa-robot"></i></div>
+                <div class="visual-choice-title">Responder com IA</div>
+                <div class="visual-choice-desc">A IA lê o FAQ oficial e responde de forma humana e persuasiva</div>
+              </div>
+              <div class="visual-choice-card" id="actCard_send_template" onclick="selectAction('send_template')">
+                <div class="visual-choice-icon"><i class="fas fa-paper-plane"></i></div>
+                <div class="visual-choice-title">Mensagem Pronta</div>
+                <div class="visual-choice-desc">Enviar template fixo com nome e variáveis do cliente</div>
+              </div>
+              <div class="visual-choice-card" id="actCard_change_stage" onclick="selectAction('change_stage')">
+                <div class="visual-choice-icon"><i class="fas fa-tags"></i></div>
+                <div class="visual-choice-title">Atualizar CRM / Tags</div>
+                <div class="visual-choice-desc">Apenas gerenciar tags e avançar etapa no funil</div>
               </div>
             </div>
 
-            <div class="form-group">
-              <label for="actionAddTag">Adicionar Tag no Kommo ao executar (opcional)</label>
-              <input type="text" id="actionAddTag" class="form-control" placeholder="Ex: Em Atendimento IA">
+            <!-- Template text (se selecionado) -->
+            <div id="templateFields" style="display: none; margin-top: 14px;">
+              <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Texto da Mensagem Pronta:</label>
+              <textarea id="templateText" class="form-control" rows="3" placeholder="Olá {{name}}, recebemos sua mensagem! Em instantes entraremos em contato."></textarea>
+              <span style="font-size: 11px; color: var(--text-muted);">Variáveis automáticas: {{name}}, {{first_name}}, {{phone}}, {{lead_id}}</span>
             </div>
+          </div>
 
-            <div class="form-group">
-              <label for="actionRemoveTag">Remover Tag no Kommo ao executar (opcional)</label>
-              <input type="text" id="actionRemoveTag" class="form-control" placeholder="Ex: Atendimento Humano">
+          <!-- PASSO 4: FILTROS E TAGS OPCIONAIS -->
+          <div class="flow-step-card" style="margin-bottom: 0;">
+            <div class="flow-step-header">
+              <span class="step-number">4</span>
+              <span class="flow-step-title">Regras Adicionais e Tags (Opcional):</span>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="actionAddTag">Adicionar Tag no Kommo</label>
+                <input type="text" id="actionAddTag" class="form-control" placeholder="Ex: Em Atendimento IA">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="actionRemoveTag">Remover Tag no Kommo</label>
+                <input type="text" id="actionRemoveTag" class="form-control" placeholder="Ex: Atendimento Humano">
+              </div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="autoExcludedTags">Bloquear se tiver a tag:</label>
+                <input type="text" id="autoExcludedTags" class="form-control" placeholder="Ex: Atendimento Humano, VIP">
+              </div>
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="autoKeywords">Palavras-chave no texto:</label>
+                <input type="text" id="autoKeywords" class="form-control" placeholder="Ex: humano, gerente (vazio = todas)">
+              </div>
             </div>
           </div>
         </form>
@@ -1101,7 +916,7 @@ router.get('/', requireAuth, (req, res) => {
       <div class="modal-footer">
         <button type="button" class="btn-secondary" onclick="closeModal()">Cancelar</button>
         <button type="button" class="btn-create" onclick="saveAutomationFromModal()">
-          <i class="fas fa-check"></i> Salvar Automação
+          <i class="fas fa-check"></i> Salvar e Ativar Automação
         </button>
       </div>
     </div>
@@ -1207,8 +1022,8 @@ router.get('/', requireAuth, (req, res) => {
 
       grid.innerHTML = currentAutomations.map(a => {
         const triggerMap = {
-          'message_add': 'Nova Mensagem',
-          'lead_add': 'Novo Lead',
+          'message_add': 'Nova Mensagem WhatsApp',
+          'lead_add': 'Novo Lead no CRM',
           'lead_stage_change': 'Mudança de Etapa',
           'lead_update': 'Lead Atualizado'
         };
@@ -1285,45 +1100,57 @@ router.get('/', requireAuth, (req, res) => {
       }
     }
 
+    function selectTrigger(triggerType) {
+      document.getElementById('autoTrigger').value = triggerType;
+      document.querySelectorAll('[id^="trigCard_"]').forEach(el => el.classList.remove('selected'));
+      const active = document.getElementById('trigCard_' + triggerType);
+      if (active) active.classList.add('selected');
+    }
+
+    function selectAction(actionType) {
+      document.getElementById('actionType').value = actionType;
+      document.querySelectorAll('[id^="actCard_"]').forEach(el => el.classList.remove('selected'));
+      const active = document.getElementById('actCard_' + actionType);
+      if (active) active.classList.add('selected');
+      document.getElementById('templateFields').style.display = actionType === 'send_template' ? 'block' : 'none';
+    }
+
     function openCreateModal(defaultPipelineId = null) {
-      document.getElementById('modalTitle').textContent = 'Nova Automação';
+      document.getElementById('modalTitle').innerHTML = '<i class="fas fa-magic" style="color: var(--primary); margin-right: 8px;"></i> Nova Automação Visual';
       document.getElementById('autoId').value = '';
       document.getElementById('autoName').value = '';
       document.getElementById('autoDesc').value = '';
-      document.getElementById('autoTrigger').value = 'message_add';
+      selectTrigger('message_add');
+      selectAction('ai_chat');
       document.getElementById('autoPipeline').value = defaultPipelineId || 'all';
       updateStagesDropdown();
-      document.getElementById('autoRequiredTags').value = '';
-      document.getElementById('autoExcludedTags').value = '';
+      document.getElementById('autoExcludedTags').value = 'Atendimento Humano, Nao Perturbe';
       document.getElementById('autoKeywords').value = '';
-      document.getElementById('actionType').value = 'ai_chat';
       document.getElementById('templateText').value = '';
-      document.getElementById('actionAddTag').value = '';
+      document.getElementById('actionAddTag').value = 'Em Atendimento IA';
       document.getElementById('actionRemoveTag').value = '';
-      toggleActionFields();
       document.getElementById('autoModal').style.display = 'flex';
     }
 
     function openEditModal(id) {
       const a = currentAutomations.find(item => item.id === id);
       if (!a) return;
-      document.getElementById('modalTitle').textContent = 'Editar Automação';
+      document.getElementById('modalTitle').innerHTML = '<i class="fas fa-edit" style="color: var(--primary); margin-right: 8px;"></i> Editar Automação';
       document.getElementById('autoId').value = a.id;
       document.getElementById('autoName').value = a.name || '';
       document.getElementById('autoDesc').value = a.description || '';
-      document.getElementById('autoTrigger').value = a.trigger || 'message_add';
+      selectTrigger(a.trigger || 'message_add');
+      
       document.getElementById('autoPipeline').value = a.conditions?.pipelineId || 'all';
       updateStagesDropdown(a.conditions?.stageId || 'all');
-      document.getElementById('autoRequiredTags').value = (a.conditions?.requiredTags || []).join(', ');
       document.getElementById('autoExcludedTags').value = (a.conditions?.excludedTags || []).join(', ');
       document.getElementById('autoKeywords').value = a.conditions?.keywordMatch || '';
       
       const action = a.actions?.[0] || {};
-      document.getElementById('actionType').value = action.type || 'ai_chat';
+      selectAction(action.type || 'ai_chat');
       document.getElementById('templateText').value = action.templateText || '';
       document.getElementById('actionAddTag').value = action.addTagOnSuccess || '';
       document.getElementById('actionRemoveTag').value = action.removeTagOnSuccess || '';
-      toggleActionFields();
       document.getElementById('autoModal').style.display = 'flex';
     }
 
@@ -1334,7 +1161,7 @@ router.get('/', requireAuth, (req, res) => {
     function updateStagesDropdown(selectedStageId = 'all') {
       const pipelineId = document.getElementById('autoPipeline').value;
       const stageSelect = document.getElementById('autoStage');
-      stageSelect.innerHTML = '<option value="all">Todas as Etapas</option>';
+      stageSelect.innerHTML = '<option value="all">Todas as Etapas (Qualquer Fase)</option>';
       
       if (pipelineId !== 'all') {
         const p = kommoPipelines.find(item => String(item.id) === String(pipelineId));
@@ -1343,11 +1170,6 @@ router.get('/', requireAuth, (req, res) => {
           stageSelect.innerHTML += \`<option value="\${st.id}" \${String(st.id) === String(selectedStageId) ? 'selected' : ''}>\${escapeHtml(st.name)}</option>\`;
         });
       }
-    }
-
-    function toggleActionFields() {
-      const type = document.getElementById('actionType').value;
-      document.getElementById('templateFields').style.display = type === 'send_template' ? 'block' : 'none';
     }
 
     async function saveAutomationFromModal() {
@@ -1366,7 +1188,7 @@ router.get('/', requireAuth, (req, res) => {
         conditions: {
           pipelineId: document.getElementById('autoPipeline').value,
           stageId: document.getElementById('autoStage').value,
-          requiredTags: document.getElementById('autoRequiredTags').value.split(',').map(s => s.trim()).filter(Boolean),
+          requiredTags: [],
           excludedTags: document.getElementById('autoExcludedTags').value.split(',').map(s => s.trim()).filter(Boolean),
           keywordMatch: document.getElementById('autoKeywords').value.trim(),
         },
@@ -1408,8 +1230,8 @@ router.get('/', requireAuth, (req, res) => {
         
         // Atualiza selects
         const sel = document.getElementById('autoPipeline');
-        sel.innerHTML = '<option value="all">Todos os Funis</option>' + kommoPipelines.map(p => \`
-          <option value="\${p.id}">\${escapeHtml(p.name)}</option>
+        sel.innerHTML = '<option value="all">Ambos os Funis Ativos (Geral)</option>' + kommoPipelines.map(p => \`
+          <option value="\${p.id}">Funil: \${escapeHtml(p.name)}</option>
         \`).join('');
 
         // Renderiza grid de pipelines
@@ -1426,18 +1248,25 @@ router.get('/', requireAuth, (req, res) => {
         return;
       }
 
-      grid.innerHTML = kommoPipelines.map(p => {
+      grid.innerHTML = kommoPipelines.map((p, pIdx) => {
         const statuses = p._embedded?.statuses || [];
         return \`
           <div class="pipeline-card">
             <div class="pipeline-header">
               <div class="pipeline-header-title">
-                <h3>\${escapeHtml(p.name)}</h3>
-                <span class="badge badge-trigger">ID \${p.id}</span>
-                <span style="font-size: 12px; color: var(--text-muted);">(\${statuses.length} Etapas)</span>
+                <div style="width: 32px; height: 32px; border-radius: 8px; background: #eff6ff; color: #2563eb; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px;">
+                  #\${pIdx + 1}
+                </div>
+                <div>
+                  <h3>\${escapeHtml(p.name)}</h3>
+                  <div style="display: flex; gap: 8px; align-items: center; margin-top: 2px;">
+                    <span class="badge badge-trigger" style="font-size: 10px;">ID \${p.id}</span>
+                    <span style="font-size: 12px; color: var(--text-muted);">\${statuses.length} Etapas no Fluxo</span>
+                  </div>
+                </div>
               </div>
-              <button class="btn-create" style="padding: 6px 12px; font-size: 12px;" onclick="openCreateModal('\${p.id}')">
-                <i class="fas fa-plus"></i> Criar Automação para este Funil
+              <button class="btn-create" style="padding: 8px 14px; font-size: 12px;" onclick="openCreateModal('\${p.id}')">
+                <i class="fas fa-plus"></i> Criar Automação neste Funil
               </button>
             </div>
             
@@ -1497,8 +1326,8 @@ router.get('/', requireAuth, (req, res) => {
       const container = document.getElementById('stagesBuilderList');
       container.innerHTML = builderStages.map((st, idx) => \`
         <div class="stage-builder-item">
-          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); width: 20px;">#\${idx + 1}</span>
-          <input type="color" class="color-chip" value="\${st.color}" onchange="builderStages[\${idx}].color=this.value; renderStageLivePreview()">
+          <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); width: 22px;">#\${idx + 1}</span>
+          <input type="color" class="color-chip" value="\${st.color}" onchange="builderStages[\${idx}].color=this.value; renderStageLivePreview()" title="Escolha a cor da etapa">
           <input type="text" class="form-control" value="\${escapeHtml(st.name)}" placeholder="Nome da etapa" oninput="builderStages[\${idx}].name=this.value; renderStageLivePreview()" style="flex: 1;">
           
           <button type="button" class="btn-icon" onclick="moveStageUp(\${idx})" title="Mover para cima" \${idx === 0 ? 'disabled style="opacity:0.3"' : ''}><i class="fas fa-arrow-up"></i></button>
@@ -1547,9 +1376,9 @@ router.get('/', requireAuth, (req, res) => {
         return;
       }
       preview.innerHTML = builderStages.map((st, idx) => \`
-        <div class="stage-flow-node" style="border-top-color: \${st.color || 'var(--primary)'}; min-width: 130px; padding: 10px 12px;">
+        <div class="stage-flow-node" style="border-top-color: \${st.color || 'var(--primary)'}; min-width: 140px; padding: 10px 14px;">
           <span style="font-size: 10px; font-weight: 700; color: var(--text-muted);">Etapa \${idx + 1}</span>
-          <span style="font-size: 12px; font-weight: 700; color: var(--text-main);">\${escapeHtml(st.name || 'Sem nome')}</span>
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-main);">\${escapeHtml(st.name || 'Sem nome')}</span>
         </div>
         \${idx < builderStages.length - 1 ? '<i class="fas fa-arrow-right flow-arrow"></i>' : ''}
       \`).join('');
