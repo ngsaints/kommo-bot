@@ -41,7 +41,12 @@ export function evaluateConditions(automation, context) {
   if (!hasExplicitAutomationScope(conds)) return false;
 
   if (conds.pipelineId && conds.pipelineId !== 'all') {
-    if (!lead?.pipeline_id || Number(lead.pipeline_id) !== Number(conds.pipelineId)) return false;
+    if (String(conds.pipelineId).startsWith('name:')) {
+      const requiredPipelineName = String(conds.pipelineId).slice(5);
+      if (!pipeline || normalizeKommoValue(pipeline.name) !== normalizeKommoValue(requiredPipelineName)) return false;
+    } else if (!lead?.pipeline_id || Number(lead.pipeline_id) !== Number(conds.pipelineId)) {
+      return false;
+    }
   }
 
   if (conds.stageId && conds.stageId !== 'all') {

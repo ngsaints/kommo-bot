@@ -1464,7 +1464,8 @@ router.get('/', requireAuth, (req, res) => {
               <div class="tags-container">
                 <span class="badge badge-trigger"><i class="fas fa-bolt"></i> \${triggerMap[a.trigger] || a.trigger}</span>
                 <span class="badge badge-action"><i class="fas fa-robot"></i> \${actionLabel}</span>
-                \${a.conditions?.requiredTags?.length ? '<span class="badge badge-condition"><i class="fas fa-tag"></i> Exige ' + escapeHtml(a.conditions.requiredTags.join(', ')) + '</span>' : ''}
+                \${String(a.conditions?.pipelineId || '').startsWith('name:') ? '<span class="badge badge-condition"><i class="fas fa-filter"></i> ' + escapeHtml(String(a.conditions.pipelineId).slice(5)) + '</span>' : ''}
+                \${a.conditions?.requiredTags?.length ? '<span class="badge badge-condition"><i class="fas fa-tag"></i> Tag ' + escapeHtml(a.conditions.requiredTags.join(', ')) + '</span>' : ''}
                 \${a.conditions?.stopAtStageName ? '<span class="badge badge-condition"><i class="fas fa-stop-circle"></i> Para em ' + escapeHtml(a.conditions.stopAtStageName) + '</span>' : ''}
                 \${a.conditions?.keywordMatch ? '<span class="badge badge-condition"><i class="fas fa-key"></i> Palavras-chave</span>' : ''}
               </div>
@@ -1569,7 +1570,9 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoDesc').value = a.description || '';
       selectTrigger(a.trigger || 'message_add');
       
-      document.getElementById('autoPipeline').value = a.conditions?.pipelineId || 'all';
+      const pipelineScope = a.conditions?.pipelineId || 'all';
+      ensurePipelineOption(pipelineScope);
+      document.getElementById('autoPipeline').value = pipelineScope;
       updateStagesDropdown(a.conditions?.stageId || 'all');
       document.getElementById('autoExcludedTags').value = (a.conditions?.excludedTags || []).join(', ');
       document.getElementById('autoRequiredTags').value = (a.conditions?.requiredTags || []).join(', ');
@@ -1683,6 +1686,7 @@ router.get('/', requireAuth, (req, res) => {
         sel.innerHTML = '<option value="all">Ambos os Funis Ativos (Geral)</option>' + kommoPipelines.map(p => \`
           <option value="\${p.id}">Funil: \${escapeHtml(p.name)}</option>
         \`).join('');
+        ensurePipelineOption('name:Funil de vendas');
         populateStopStageOptions();
 
         // Renderiza grid de pipelines
@@ -1708,6 +1712,16 @@ router.get('/', requireAuth, (req, res) => {
       ensureStopStageOption(previous);
     }
 
+    function ensurePipelineOption(value) {
+      const select = document.getElementById('autoPipeline');
+      if (!select) return;
+      const normalized = String(value || 'all');
+      if (normalized.startsWith('name:') && ![...select.options].some(option => option.value === normalized)) {
+        const name = normalized.slice(5);
+        select.add(new Option('Funil: ' + name, normalized));
+      }
+    }
+
     function ensureStopStageOption(value) {
       const select = document.getElementById('autoStopAtStage');
       if (!select) return;
@@ -1717,6 +1731,7 @@ router.get('/', requireAuth, (req, res) => {
       }
       select.value = normalized;
     }
+
 
     function renderPipelinesGrid() {
       const grid = document.getElementById('pipelinesGrid');

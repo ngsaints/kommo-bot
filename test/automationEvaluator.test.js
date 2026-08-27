@@ -123,3 +123,34 @@ test('trava de etapa bloqueia se o funil não puder ser confirmado', () => {
   };
   assert.equal(evaluateConditions(automation, contextWithTags(['Contato Inicial'])), false);
 });
+
+test('automação principal exige tag no Funil de vendas e desliga a partir de Lead', () => {
+  const automation = {
+    conditions: {
+      pipelineId: 'name:Funil de vendas',
+      stageId: 'all',
+      requiredTags: ['Contato Inicial'],
+      excludedTags: [],
+      messageTypes: ['text'],
+      stopAtStageName: 'Lead',
+    },
+  };
+  const stages = [
+    { id: 10, name: 'Contato Inicial', sort: 10 },
+    { id: 20, name: 'Primeiro Contato (Prioridade)', sort: 20 },
+    { id: 30, name: 'Lead', sort: 30 },
+  ];
+  const inStage = (statusId, tags = ['Contato Inicial']) => contextWithTags(tags, {
+    lead: { pipeline_id: 1, status_id: statusId, _embedded: { tags: tags.map(name => ({ name })) } },
+    pipeline: { id: 1, name: 'Funil de Vendas', _embedded: { statuses: stages } },
+  });
+
+  assert.equal(evaluateConditions(automation, inStage(10)), true);
+  assert.equal(evaluateConditions(automation, inStage(20)), true);
+  assert.equal(evaluateConditions(automation, inStage(30)), false);
+  assert.equal(evaluateConditions(automation, inStage(10, [])), false);
+  assert.equal(evaluateConditions(automation, {
+    ...inStage(10),
+    pipeline: { id: 2, name: 'Outro Funil', _embedded: { statuses: stages } },
+  }), false);
+});

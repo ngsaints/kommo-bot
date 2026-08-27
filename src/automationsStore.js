@@ -33,6 +33,9 @@ export function migrateAutomationSafety(automations) {
       stopAfterMatch: automation.id === 'aut-transfer-human',
       conditions: {
         ...(automation.conditions || {}),
+        pipelineId: automation.conditions?.pipelineId && automation.conditions.pipelineId !== 'all'
+          ? automation.conditions.pipelineId
+          : 'name:Funil de vendas',
         requiredTags: hasInitialContact ? requiredTags : [...requiredTags, 'Contato Inicial'],
         stopAtStageName: automation.conditions?.stopAtStageName || 'Lead',
         allowAllLeads: false,
