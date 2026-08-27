@@ -147,12 +147,14 @@ FERRAMENTAS DISPONÍVEIS:
 /**
  * Gera resposta da IA para o lead
  */
-export async function getAiResponse(message, history, lead = {}) {
+export async function getAiResponse(message, history, lead = {}, customPrompt = '') {
   if (!process.env.OPENAI_API_KEY) {
     return `Olá! Obrigado pela mensagem. Em breve um de nossos atendentes responderá.`;
   }
 
-  const systemPrompt = DEFAULT_PROMPT;
+  // Cada automação pode definir a própria personalidade e instruções. Quando o
+  // campo estiver vazio, preserva o comportamento padrão já usado em produção.
+  const systemPrompt = String(customPrompt || '').trim() || DEFAULT_PROMPT;
 
   // Contexto comercial do Google Docs (FAQ Comercial CWB Fight Club)
   let docContext = '';

@@ -1044,6 +1044,12 @@ router.get('/', requireAuth, (req, res) => {
               </div>
             </div>
 
+            <div id="aiPromptFields" style="margin-top: 14px;">
+              <label for="aiCustomPrompt" style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Prompt inicial da IA</label>
+              <textarea id="aiCustomPrompt" class="form-control" rows="6" placeholder="Ex: Atue como Márcia, consultora da CWB Fight Club. Converse de forma acolhedora, objetiva e profissional..."></textarea>
+              <span style="display:block;font-size:11px;color:var(--text-muted);margin-top:5px;">Define identidade, tom de voz e regras de atendimento. A base de conhecimento continua sendo usada para informações como preços, horários e unidades.</span>
+            </div>
+
             <!-- Template text (se selecionado) -->
             <div id="templateFields" style="display: none; margin-top: 14px;">
               <label style="display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Texto da Mensagem Pronta:</label>
@@ -1464,6 +1470,7 @@ router.get('/', requireAuth, (req, res) => {
       const active = document.getElementById('actCard_' + actionType);
       if (active) active.classList.add('selected');
       document.getElementById('templateFields').style.display = actionType === 'send_template' ? 'block' : 'none';
+      document.getElementById('aiPromptFields').style.display = actionType === 'ai_chat' ? 'block' : 'none';
       renderAutomationCanvas('action');
     }
 
@@ -1480,6 +1487,7 @@ router.get('/', requireAuth, (req, res) => {
       document.getElementById('autoRequiredTags').value = 'Contato Inicial';
       document.getElementById('autoKeywords').value = '';
       document.getElementById('templateText').value = '';
+      document.getElementById('aiCustomPrompt').value = '';
       document.getElementById('actionAddTag').value = 'Em Atendimento IA';
       document.getElementById('actionRemoveTag').value = '';
       document.getElementById('autoPriority').value = '0';
@@ -1507,6 +1515,7 @@ router.get('/', requireAuth, (req, res) => {
       const action = a.actions?.[0] || {};
       selectAction(action.type || 'ai_chat');
       document.getElementById('templateText').value = action.templateText || '';
+      document.getElementById('aiCustomPrompt').value = action.customPrompt || '';
       document.getElementById('actionAddTag').value = action.addTagOnSuccess || '';
       document.getElementById('actionRemoveTag').value = action.removeTagOnSuccess || '';
       document.getElementById('autoPriority').value = String(a.priority || 0);
@@ -1568,6 +1577,8 @@ router.get('/', requireAuth, (req, res) => {
           {
             type: document.getElementById('actionType').value,
             templateText: document.getElementById('templateText').value.trim(),
+            useCustomPrompt: Boolean(document.getElementById('aiCustomPrompt').value.trim()),
+            customPrompt: document.getElementById('aiCustomPrompt').value.trim(),
             sendChannel: 'whatsapp_uazapi',
             addTagOnSuccess: document.getElementById('actionAddTag').value.trim(),
             removeTagOnSuccess: document.getElementById('actionRemoveTag').value.trim(),

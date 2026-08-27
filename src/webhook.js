@@ -45,7 +45,7 @@ async function executeAction(action, automation, context) {
       // 3. Gera resposta da IA
       let aiResponse;
       try {
-        aiResponse = await getAiResponse(text, history, lead);
+        aiResponse = await getAiResponse(text, history, lead, action.customPrompt);
         addLog('ai', 'success', `[${automation.name}] Resposta IA gerada (${aiResponse.length} chars)`);
       } catch (err) {
         addLog('error', 'error', `[${automation.name}] Erro na IA: ${err.message}`);
