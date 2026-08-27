@@ -142,7 +142,9 @@ export async function addLeadNote(leadId, text) {
 export async function getPipelines() {
   try {
     const { data } = await api.get('/leads/pipelines');
-    return data._embedded?.pipelines || [];
+    const list = data._embedded?.pipelines || [];
+    // Retorna apenas pipelines ativos (ignora arquivados)
+    return list.filter(p => !p.is_archive);
   } catch (err) {
     console.error('Erro ao buscar pipelines:', err.message);
     return [];
