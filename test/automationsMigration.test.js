@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'fs';
 import { migrateAutomationSafety } from '../src/automationsStore.js';
+
+const automations = JSON.parse(
+  fs.readFileSync(new URL('../data/automations.json', import.meta.url), 'utf8')
+);
 
 test('migra regras persistidas para tag Contato Inicial no Funil de vendas', () => {
   const migrated = migrateAutomationSafety([
@@ -26,6 +31,21 @@ test('migra regras persistidas para tag Contato Inicial no Funil de vendas', () 
     'Primeiro Contato (Prioridade)',
   ]);
   assert.equal(migrated[1].conditions.stopAtStageName, 'Lead');
+});
+
+test('automação principal versionada inicia pausada e usa Novo Lead Criado', () => {
+  const mainAutomation = automations.find(item => item.id === 'aut-default-ia');
+  assert.ok(mainAutomation);
+  assert.equal(mainAutomation.active, false);
+  assert.equal(mainAutomation.trigger, 'lead_add');
+});
+
+test('prompt principal envia o link do Netlify e não usa tools do Google Agenda', () => {
+  const mainAutomation = automations.find(item => item.id === 'aut-default-ia');
+  const prompt = mainAutomation?.actions?.find(item => item.type === 'ai_chat')?.customPrompt || '';
+  assert.match(prompt, /https:\/\/stunning-croquembouche-c01dde\.netlify\.app\//);
+  assert.doesNotMatch(prompt, /GET_ALL_CALENDAR|UPDATE_CALENDAR|REMOVE_CALENDAR_GUEST/);
+  assert.doesNotMatch(prompt, /\]\(https:\/\/stunning-croquembouche-c01dde\.netlify\.app\//);
 });
 
 test('migração é idempotente e não duplica a tag', () => {

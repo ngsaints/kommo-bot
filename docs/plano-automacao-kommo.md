@@ -117,10 +117,26 @@ A fase `Lead` não fez parte do caminho normal de qualificação/agendamento des
 - O estado de agenda deve guardar pelo menos `lead_id`, unidade, modalidade, data/hora, e-mail, `calendar_event_id` e status da reserva.
 - A automação deve encerrar a atuação da Maria ao sair do escopo de captação, independentemente da existência de tags antigas.
 
+### Revisão de escopo — 27/08/2026, 16:10–16:19
+
+Foi confirmada uma mudança no fluxo de agendamento após alinhamento com Pedro:
+
+- o atendimento inicial e a coleta mínima de nome permanecem no `Atendimento Inteligente com IA`;
+- modalidade, experiência, objetivo, unidade, data e horário passam a ser coletados pelo formulário do site;
+- o gatilho correto da automação principal é `Novo Lead Criado`, não nova mensagem nem nova conversa;
+- a IA não deve mais consultar disponibilidade nem concluir reservas pelo Google Agenda;
+- quando o lead aceitar agendar, a IA envia o link do site hospedado no Netlify;
+- link oficial recebido: `https://stunning-croquembouche-c01dde.netlify.app/`;
+- no site, o lead escolhe unidade, dia e horário e preenche um formulário curto;
+- o resultado preenchido no site deve ser transportado para o card correto do lead no Kommo;
+- ferramentas e instruções de Google Agenda do prompt antigo são legado e foram removidas do prompt vigente.
+
+O histórico anterior de agendamento continua neste documento como evidência do comportamento antigo, não como especificação vigente.
+
 ## 4. Fluxo funcional preliminar
 
-1. O Kommo cria ou recebe a nova conversa no `Funil de vendas` e adiciona a tag `Contato Inicial`.
-2. O webhook recebe a mensagem e identifica o lead.
+1. O Kommo cria um novo lead no `Funil de vendas` e adiciona a tag `Contato Inicial`.
+2. O webhook recebe o evento de novo lead criado e identifica o card.
 3. O sistema consulta no Kommo:
    - funil atual;
    - fase atual;
@@ -132,9 +148,14 @@ A fase `Lead` não fez parte do caminho normal de qualificação/agendamento des
    - histórico da conversa;
    - base de conhecimento;
    - dados já existentes no lead.
-6. Ao obter uma informação nova, a Maria chama uma ferramenta interna específica para atualizar o Kommo.
-7. Dados já preenchidos não devem ser enviados novamente, exceto quando o lead corrigir a informação.
-8. Quando os critérios mínimos forem satisfeitos, uma ferramenta de qualificação atualiza o CRM e, se confirmado, move o lead para a fase definida.
+6. A IA coleta somente o nome de quem vai treinar e usa as ferramentas de nome quando necessário.
+7. A IA apresenta a aula experimental e espera o aceite antes de enviar o link.
+8. Quando o lead aceitar agendar, a IA envia o link oficial do Netlify em uma única mensagem de direcionamento.
+9. A IA não pergunta modalidade, experiência, objetivo, unidade, data, horário ou e-mail.
+10. O site coleta unidade, dia, horário e os campos do formulário.
+11. O backend do site envia uma confirmação autenticada e idempotente para a integração.
+12. A integração valida o vínculo do lead, atualiza somente os campos mapeados no Kommo e então executa a passagem de fase confirmada.
+13. Em caso de falha parcial, o lead não muda de fase e o erro fica registrado para reprocessamento seguro.
 
 ## 5. Integração necessária com a API do Kommo
 
@@ -168,13 +189,16 @@ Os nomes abaixo vêm do prompt e ainda precisam ser ligados a implementações r
 
 - `atualiza_nome_contato`
 - `atualiza_nome_lead`
+- `transfere_atendimento`
+
+Ferramentas do fluxo antigo que foram removidas do prompt e não serão chamadas pela IA nesta arquitetura:
+
 - `preenche_modalidade`
 - `preenche_jatreinou`
 - `preenche_objetivo`
 - `preenche_unidade`
 - `atualiza_email`
 - `lead_qualificado`
-- `transfere_atendimento`
 - `data_hora_agendamento`
 - `GET_ALL_CALENDAR`
 - `UPDATE_CALENDAR`
@@ -260,28 +284,33 @@ Ainda é necessário confirmar:
 - [ ] Retornar o resultado ao modelo antes da resposta ao lead.
 - [ ] Limitar ferramentas por etapa do fluxo.
 
-### Etapa D — Qualificação
+### Etapa D — Qualificação pelo formulário
 
-- [ ] Definir os campos mínimos.
-- [ ] Detectar quando todos foram preenchidos.
-- [ ] Marcar o lead como qualificado.
-- [ ] Executar a passagem de fase confirmada na transcrição.
+- [ ] Confirmar os campos obrigatórios do formulário do Netlify.
+- [ ] Mapear cada resposta do formulário para o campo real do Kommo.
+- [ ] Definir no backend do formulário o critério determinístico de qualificação.
+- [ ] Marcar e mover o lead somente após a gravação bem-sucedida dos campos mínimos.
 
-### Etapa E — Agenda
+### Etapa E — Agendamento pelo site Netlify
 
-- [ ] Mapear as ferramentas reais de calendário.
-- [ ] Implementar consulta de disponibilidade.
-- [ ] Implementar reserva, reagendamento e cancelamento.
-- [ ] Persistir o ID do evento confirmado.
-- [ ] Permitir a retomada após `Preenchido` sem solicitar novamente um horário já confirmado.
-- [ ] Sincronizar data e hora no Kommo somente após confirmação do calendário.
+- [x] Receber a URL oficial do site: `https://stunning-croquembouche-c01dde.netlify.app/`.
+- [ ] Identificar o projeto/código responsável pelo site.
+- [ ] Definir como o site recebe o vínculo com o lead sem expor ou aceitar um `lead_id` adulterável.
+- [ ] Implementar token curto, assinado e com validade para abrir o agendamento.
+- [ ] Confirmar quais campos o formulário coleta e seus IDs correspondentes no Kommo.
+- [ ] Definir o contrato de retorno do site: endpoint, autenticação, payload e códigos de erro.
+- [ ] Implementar recebimento idempotente da conclusão do formulário.
+- [ ] Atualizar unidade, data, horário e demais respostas no card correto do Kommo.
+- [ ] Mover para `EXPERIMENTAL AGENDADO` somente depois de todas as gravações obrigatórias terem sucesso.
+- [ ] Registrar falhas e permitir reprocessamento sem duplicar tags, campos ou mudança de fase.
+- [x] Substituir o prompt pelo novo fluxo de envio do link, sem tools de Google Agenda.
 
 ### Etapa F — Testes
 
 - [ ] Executar os testes funcionais em uma conversa controlada, identificada como teste.
 - [ ] Confirmar visualmente no card que cada dado coletado foi persistido.
 - [ ] Confirmar a passagem de fase apenas quando o critério definido for atendido.
-- [ ] Confirmar o agendamento no calendário e a sincronização final no Kommo.
+- [ ] Confirmar o agendamento no site Netlify e a sincronização final no Kommo.
 - [ ] Verificar que o teste não afeta outras conversas da operação.
 - [ ] Lead novo com tag correta e fase anterior a `Lead`.
 - [ ] Lead sem a tag `Contato Inicial`.
@@ -292,8 +321,9 @@ Ainda é necessário confirmar:
 - [ ] Falha parcial da API sem avanço indevido de fase.
 - [ ] Transferência humana interrompendo respostas da IA.
 - [ ] Qualificação completa e incompleta.
-- [ ] Agendamento, reagendamento e cancelamento.
-- [ ] Resposta `Preenchido` recuperando corretamente a seleção e o ID do evento.
+- [ ] Link válido, expirado, adulterado e reutilizado.
+- [ ] Envio completo e incompleto do formulário do Netlify.
+- [ ] Reenvio da mesma confirmação sem duplicar atualização ou mudança de fase.
 - [ ] Reentrega do mesmo webhook sem mensagem ou movimentação duplicada.
 - [ ] Um único lembrete de 24 horas por agendamento.
 - [ ] Nenhuma atuação da Maria em conversas de aluno, cancelamento, cobrança ou pós-venda.
@@ -305,7 +335,9 @@ Ainda é necessário confirmar:
 - Fase de destino após qualificação.
 - Responsável por mover cada fase.
 - Regra de manutenção ou remoção das tags.
-- Integração real usada para calendário.
+- URL e repositório do site de agendamento hospedado no Netlify.
+- Payload, autenticação e responsável pelo retorno do site ao Kommo.
+- Campos coletados no formulário e mapeamento para os IDs do Kommo.
 - Comportamento desejado quando o lead abandona e retorna à conversa.
 - Origem exata das mudanças de fase e do lembrete duplicado no caso real.
 - Política de uma mensagem por turno versus mensagens divididas.
