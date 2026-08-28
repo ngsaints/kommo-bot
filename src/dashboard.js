@@ -1863,18 +1863,40 @@ router.get('/', requireAuth, (req, res) => {
     }
 
     function updateStagesDropdown(selectedStageId = 'all') {
-      const pipelineId = document.getElementById('autoPipeline').value;
+      const pipelineScope = document.getElementById('autoPipeline').value;
       const stageSelect = document.getElementById('autoStage');
       stageSelect.innerHTML = '<option value="all">Todas as Etapas (Qualquer Fase)</option>';
       
-      if (pipelineId !== 'all') {
-        const p = kommoPipelines.find(item => String(item.id) === String(pipelineId));
+      if (pipelineScope !== 'all') {
+        const p = resolveKommoPipeline(pipelineScope);
         const statuses = p?._embedded?.statuses || [];
         statuses.forEach(st => {
           stageSelect.innerHTML += \`<option value="\${st.id}" \${String(st.id) === String(selectedStageId) ? 'selected' : ''}>\${escapeHtml(st.name)}</option>\`;
         });
       }
       renderAutomationCanvas();
+    }
+
+    function normalizePipelineName(value) {
+      return String(value || '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .trim()
+        .toLowerCase();
+    }
+
+    function resolveKommoPipeline(scope) {
+      const normalizedScope = String(scope || 'all');
+      if (normalizedScope === 'all') return null;
+
+      const byId = kommoPipelines.find(item => String(item.id) === normalizedScope);
+      if (byId) return byId;
+
+      const requestedName = normalizedScope.startsWith('name:')
+        ? normalizedScope.slice(5)
+        : normalizedScope;
+      const normalizedName = normalizePipelineName(requestedName);
+      return kommoPipelines.find(item => normalizePipelineName(item.name) === normalizedName) || null;
     }
 
     async function saveAutomationFromModal() {
@@ -1944,17 +1966,28 @@ router.get('/', requireAuth, (req, res) => {
     // ===== GESTÃO DE PIPELINES (FUNIS) VISUAL ROADMAP =====
     async function loadKommoPipelines() {
       try {
+        const sel = document.getElementById('autoPipeline');
+        const previousPipelineScope = sel?.value || 'all';
+        const previousStageId = document.getElementById('autoStage')?.value || 'all';
         const r = await fetch(API_BASE + '/kommo/pipelines');
         if (!r.ok) return;
         kommoPipelines = await r.json();
         
         // Atualiza selects
-        const sel = document.getElementById('autoPipeline');
         sel.innerHTML = '<option value="all">Ambos os Funis Ativos (Geral)</option>' + kommoPipelines.map(p => \`
           <option value="\${p.id}">Funil: \${escapeHtml(p.name)}</option>
         \`).join('');
-        ensurePipelineOption('name:Funil de vendas');
+        ensurePipelineOption(previousPipelineScope === 'all' ? 'name:Funil de vendas' : previousPipelineScope);
+        if ([...sel.options].some(option => option.value === previousPipelineScope)) {
+          sel.value = previousPipelineScope;
+        }
         populateStopStageOptions();
+
+        // Se a API terminar de carregar enquanto o modal estiver aberto,
+        // atualiza as etapas sem perder a seleção que o usuário já tinha.
+        if (document.getElementById('autoModal')?.style.display === 'flex') {
+          updateStagesDropdown(previousStageId);
+        }
 
         // Renderiza grid de pipelines
         renderPipelinesGrid();
