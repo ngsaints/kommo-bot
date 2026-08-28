@@ -135,14 +135,14 @@ O histórico anterior de agendamento continua neste documento como evidência do
 
 ## 4. Fluxo funcional preliminar
 
-1. O Kommo cria um novo lead no `Funil de vendas` e adiciona a tag `Contato Inicial`.
+1. O Kommo cria um novo lead no `Funil de vendas`, inicialmente em `Contato Inicial`. Tags de SalesBot podem ser aplicadas logo depois e, por isso, não são pré-condição do evento de criação.
 2. O webhook recebe o evento de novo lead criado e identifica o card.
 3. O sistema consulta no Kommo:
    - funil atual;
    - fase atual;
    - tags atuais;
    - campos personalizados e valores já preenchidos.
-4. A regra valida se a Maria pode atender o lead.
+4. A regra valida o funil e a coluna permitida antes de a Maria atender o lead. A partir de `Lead`, a automação fica bloqueada mesmo que alguma tag permaneça no contato.
 5. A Maria responde com base em:
    - prompt personalizado;
    - histórico da conversa;

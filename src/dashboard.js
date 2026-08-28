@@ -950,6 +950,10 @@ router.get('/', requireAuth, (req, res) => {
         <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px;">
           Configure esta URL no Kommo (Configurações &rarr; Integrações &rarr; Webhooks) para os eventos desejados:
         </p>
+        <div style="margin-bottom: 12px; padding: 11px 13px; border: 1px solid #bfdbfe; background: #eff6ff; color: #1e3a5f; border-radius: 8px; font-size: 12px; line-height: 1.5;">
+          <strong>Obrigatório para o Atendimento Inteligente com IA:</strong>
+          marque o evento <strong>Lead adicionado / Novo lead criado</strong> no Kommo. O evento de nova mensagem, sozinho, não dispara esta automação.
+        </div>
         <div class="url-box">
           <code id="webhookUrlDisplay">https://162-243-173-155.nip.io/webhook/cwbfightclub</code>
           <button class="btn-create" onclick="copyWebhookUrl()">
@@ -1926,6 +1930,7 @@ router.get('/', requireAuth, (req, res) => {
       }
       const payload = {
         id: id || undefined,
+        active: true,
         name,
         description: document.getElementById('autoDesc').value.trim(),
         priority: Number(document.getElementById('autoPriority').value || 0),
@@ -2442,7 +2447,7 @@ router.post('/api/automations', requireAuth, (req, res) => {
     });
   }
   const saved = saveAutomation(data);
-  addLog('workflow', 'success', `Automação "${saved.name}" salva via painel`);
+  addLog('workflow', 'success', `Automação "${saved.name}" salva e ativada via painel`);
   res.json(saved);
 });
 

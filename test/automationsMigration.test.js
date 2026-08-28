@@ -13,10 +13,12 @@ test('migra regras persistidas para tag Contato Inicial no Funil de vendas', () 
     { id: 'aut-transfer-human', conditions: { requiredTags: [] } },
   ]);
 
-  assert.deepEqual(migrated[0].conditions.requiredTags, ['Contato Inicial']);
+  assert.deepEqual(migrated[0].conditions.requiredTags, []);
   assert.equal(migrated[0].conditions.pipelineId, 'name:Funil de vendas');
   assert.equal(migrated[0].priority, 10);
   assert.equal(migrated[0].stopAfterMatch, false);
+  assert.equal(migrated[0].trigger, 'lead_add');
+  assert.equal(migrated[0].safetyVersion, 4);
   assert.deepEqual(migrated[0].conditions.allowedStageNames, [
     'Contato Inicial',
     'Primeiro Contato (Prioridade)',
@@ -38,6 +40,8 @@ test('automação principal versionada inicia pausada e usa Novo Lead Criado', (
   assert.ok(mainAutomation);
   assert.equal(mainAutomation.active, false);
   assert.equal(mainAutomation.trigger, 'lead_add');
+  assert.deepEqual(mainAutomation.conditions.requiredTags, []);
+  assert.equal(mainAutomation.safetyVersion, 4);
 });
 
 test('prompt principal envia o link do Netlify e não usa tools do Google Agenda', () => {
@@ -48,9 +52,10 @@ test('prompt principal envia o link do Netlify e não usa tools do Google Agenda
   assert.doesNotMatch(prompt, /\]\(https:\/\/stunning-croquembouche-c01dde\.netlify\.app\//);
 });
 
-test('migração é idempotente e não duplica a tag', () => {
+test('migração é idempotente e não reintroduz tag assíncrona no gatilho de novo lead', () => {
   const original = [{ id: 'aut-default-ia', conditions: { requiredTags: ['Contato Inicial'] } }];
   const once = migrateAutomationSafety(original);
   const twice = migrateAutomationSafety(once);
   assert.deepEqual(twice, once);
+  assert.deepEqual(twice[0].conditions.requiredTags, []);
 });

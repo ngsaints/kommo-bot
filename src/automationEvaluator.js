@@ -32,25 +32,32 @@ export function hasExplicitAutomationScope(conditions = {}) {
  * Avalia se o lead atende a todas as condições de uma automação.
  * Filtros configurados trabalham em modo fail-closed: contexto ausente não passa.
  */
-export function evaluateConditions(automation, context) {
+export function automationAcceptsEvent(automation, eventType) {
+  if (automation?.trigger === 'all') return true;
+  return automation?.trigger === eventType;
+}
+
+export function evaluateConditionsDetailed(automation, context) {
   const { lead, text, messageType, pipeline } = context;
   const conds = automation.conditions || {};
+  const rejected = (reason, detail = '') => ({ matches: false, reason, detail });
 
   // Segurança operacional: uma automação precisa declarar onde pode atuar.
   // "Todos os leads" só é aceito quando explicitamente habilitado.
-  if (!hasExplicitAutomationScope(conds)) return false;
+  if (!hasExplicitAutomationScope(conds)) return rejected('sem_escopo_explicito');
 
   if (conds.pipelineId && conds.pipelineId !== 'all') {
     if (String(conds.pipelineId).startsWith('name:')) {
       const requiredPipelineName = String(conds.pipelineId).slice(5);
-      if (!pipeline || normalizeKommoValue(pipeline.name) !== normalizeKommoValue(requiredPipelineName)) return false;
+      if (!pipeline) return rejected('funil_nao_encontrado', requiredPipelineName);
+      if (normalizeKommoValue(pipeline.name) !== normalizeKommoValue(requiredPipelineName)) return rejected('funil_diferente', pipeline.name);
     } else if (!lead?.pipeline_id || Number(lead.pipeline_id) !== Number(conds.pipelineId)) {
-      return false;
+      return rejected('funil_diferente', String(lead?.pipeline_id || 'ausente'));
     }
   }
 
   if (conds.stageId && conds.stageId !== 'all') {
-    if (!lead?.status_id || Number(lead.status_id) !== Number(conds.stageId)) return false;
+    if (!lead?.status_id || Number(lead.status_id) !== Number(conds.stageId)) return rejected('etapa_diferente', String(lead?.status_id || 'ausente'));
   }
 
   // Para fluxos sensíveis, a lista de etapas permitidas é mais segura que
@@ -60,7 +67,8 @@ export function evaluateConditions(automation, context) {
     const statuses = pipeline?._embedded?.statuses || [];
     const current = statuses.find(status => Number(status.id) === Number(lead?.status_id));
     const allowed = conds.allowedStageNames.map(normalizeKommoValue).filter(Boolean);
-    if (!current || !allowed.includes(normalizeKommoValue(current.name))) return false;
+    if (!current) return rejected('etapa_nao_encontrada_no_funil', String(lead?.status_id || 'ausente'));
+    if (!allowed.includes(normalizeKommoValue(current.name))) return rejected('etapa_nao_permitida', current.name);
   }
 
   // Impede que uma automação de primeiro contato continue atendendo depois
@@ -74,23 +82,26 @@ export function evaluateConditions(automation, context) {
       normalizeKommoValue(status.name) === normalizeKommoValue(conds.stopAtStageName)
     );
     const current = statuses.find(status => Number(status.id) === Number(lead?.status_id));
-    if (!cutoff || !current || Number(current.sort || 0) >= Number(cutoff.sort || 0)) return false;
+    if (!cutoff || !current) return rejected('barreira_de_etapa_nao_confirmada');
+    if (Number(current.sort || 0) >= Number(cutoff.sort || 0)) return rejected('automacao_encerrada_na_etapa', current.name);
   }
 
   const leadTags = getLeadTagNames(lead);
 
   if (Array.isArray(conds.requiredTags) && conds.requiredTags.length > 0) {
     const requiredTags = conds.requiredTags.map(normalizeKommoValue).filter(Boolean);
-    if (!requiredTags.every(tag => leadTags.includes(tag))) return false;
+    const missingTags = requiredTags.filter(tag => !leadTags.includes(tag));
+    if (missingTags.length > 0) return rejected('tag_obrigatoria_ausente', missingTags.join(', '));
   }
 
   if (Array.isArray(conds.excludedTags) && conds.excludedTags.length > 0) {
     const excludedTags = conds.excludedTags.map(normalizeKommoValue).filter(Boolean);
-    if (excludedTags.some(tag => leadTags.includes(tag))) return false;
+    const blockedTag = excludedTags.find(tag => leadTags.includes(tag));
+    if (blockedTag) return rejected('tag_bloqueada_presente', blockedTag);
   }
 
   if (Array.isArray(conds.messageTypes) && conds.messageTypes.length > 0) {
-    if (!messageType || !conds.messageTypes.includes(messageType)) return false;
+    if (!messageType || !conds.messageTypes.includes(messageType)) return rejected('tipo_de_mensagem_nao_permitido', String(messageType || 'ausente'));
   }
 
   if (conds.keywordMatch && conds.keywordMatch.trim()) {
@@ -99,8 +110,12 @@ export function evaluateConditions(automation, context) {
       .map(normalizeKommoValue)
       .filter(Boolean);
     const normalizedText = normalizeKommoValue(text);
-    if (keywords.length > 0 && !keywords.some(keyword => normalizedText.includes(keyword))) return false;
+    if (keywords.length > 0 && !keywords.some(keyword => normalizedText.includes(keyword))) return rejected('palavra_chave_ausente');
   }
 
-  return true;
+  return { matches: true, reason: 'aplicavel', detail: '' };
+}
+
+export function evaluateConditions(automation, context) {
+  return evaluateConditionsDetailed(automation, context).matches;
 }

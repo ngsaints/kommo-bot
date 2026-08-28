@@ -4,7 +4,7 @@ import { getAiResponse } from './agent.js';
 import { addExecution, addLog } from './logger.js';
 import { readAutomationState } from './dashboard.js';
 import { readAutomations, recordAutomationRun } from './automationsStore.js';
-import { evaluateConditions } from './automationEvaluator.js';
+import { automationAcceptsEvent, evaluateConditionsDetailed } from './automationEvaluator.js';
 import axios from 'axios';
 
 /**
@@ -31,7 +31,18 @@ async function executeAction(action, automation, context) {
   const { lead, text, contactId, entityId } = context;
   const result = { success: false, actionType: action.type };
 
-  const phone = await resolvePhone(lead, contactId);
+  let phone = await resolvePhone(lead, contactId);
+  // No lead_add, o vínculo com o contato pode ser concluído alguns instantes
+  // depois do primeiro webhook. Uma releitura curta evita perder o telefone.
+  if (!phone && context.eventType === 'lead_add') {
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      const refreshedLead = await getLead(entityId);
+      phone = await resolvePhone(refreshedLead, contactId);
+    } catch (err) {
+      addLog('warn', 'warn', `[${automation.name}] Nao foi possivel reler o contato do novo lead: ${err.message}`);
+    }
+  }
 
   switch (action.type) {
     case 'ai_chat': {
@@ -70,10 +81,10 @@ async function executeAction(action, automation, context) {
         addLog('warn', 'warn', `[${automation.name}] Telefone nao encontrado para o lead ${entityId}`);
       }
 
-      // Tags de pós-execução
-      if (action.addTagOnSuccess) await addTag(entityId, action.addTagOnSuccess);
-      if (action.removeTagOnSuccess) await removeTag(entityId, action.removeTagOnSuccess);
-      if (action.moveStageId && action.moveStageId !== 'all') {
+      // Pós-execução só ocorre depois que a mensagem foi realmente entregue ao provedor.
+      if (result.success && action.addTagOnSuccess) await addTag(entityId, action.addTagOnSuccess);
+      if (result.success && action.removeTagOnSuccess) await removeTag(entityId, action.removeTagOnSuccess);
+      if (result.success && action.moveStageId && action.moveStageId !== 'all') {
         await updateLeadStage(entityId, action.movePipelineId, action.moveStageId);
       }
       break;
@@ -93,10 +104,10 @@ async function executeAction(action, automation, context) {
         }
       }
 
-      // Tags de pós-execução
-      if (action.addTagOnSuccess) await addTag(entityId, action.addTagOnSuccess);
-      if (action.removeTagOnSuccess) await removeTag(entityId, action.removeTagOnSuccess);
-      if (action.moveStageId && action.moveStageId !== 'all') {
+      // Tags e movimentação também dependem do envio efetivo do template.
+      if (result.success && action.addTagOnSuccess) await addTag(entityId, action.addTagOnSuccess);
+      if (result.success && action.removeTagOnSuccess) await removeTag(entityId, action.removeTagOnSuccess);
+      if (result.success && action.moveStageId && action.moveStageId !== 'all') {
         await updateLeadStage(entityId, action.movePipelineId, action.moveStageId);
       }
       break;
@@ -196,16 +207,27 @@ export async function processKommoEvent(body, eventType) {
 
   // 2. Carrega automações ativas para o gatilho correspondente
   const allAutomations = readAutomations();
+  const rejectionDetails = [];
   const matchedAutomations = allAutomations.filter(a => {
-    if (!a.active) return false;
-    // Gatilho compatível
-    if (a.trigger !== eventType && a.trigger !== 'all') return false;
-    // Avaliação de condições e regras do Kommo
-    return evaluateConditions(a, context);
+    if (!a.active) {
+      rejectionDetails.push(`"${a.name}": pausada`);
+      return false;
+    }
+    if (!automationAcceptsEvent(a, eventType)) {
+      rejectionDetails.push(`"${a.name}": evento ${eventType}, espera ${a.trigger}`);
+      return false;
+    }
+    const evaluation = evaluateConditionsDetailed(a, context);
+    if (!evaluation.matches) {
+      rejectionDetails.push(`"${a.name}": ${evaluation.reason}${evaluation.detail ? ` (${evaluation.detail})` : ''}`);
+      return false;
+    }
+    return true;
   }).sort((a, b) => Number(b.priority || 0) - Number(a.priority || 0));
 
   if (matchedAutomations.length === 0) {
-    addLog('info', 'info', `Nenhuma regra de automacao aplicavel para o Lead ${entityId}`);
+    const diagnostic = rejectionDetails.length > 0 ? ` Motivos: ${rejectionDetails.join('; ')}` : '';
+    addLog('info', 'info', `Nenhuma regra de automacao aplicavel para o Lead ${entityId}.${diagnostic}`);
     return { matched: 0 };
   }
 

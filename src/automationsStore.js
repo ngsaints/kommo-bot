@@ -10,6 +10,7 @@ const INITIAL_CONTACT_ALLOWED_STAGES = [
   'Contato Inicial',
   'Primeiro Contato (Prioridade)',
 ];
+const AUTOMATION_SAFETY_VERSION = 4;
 
 // Garante existência da pasta de dados
 if (!fs.existsSync(DATA_DIR)) {
@@ -30,17 +31,27 @@ export function migrateAutomationSafety(automations) {
     const hasInitialContact = requiredTags.some(tag =>
       String(tag || '').trim().toLowerCase() === 'contato inicial'
     );
+    const needsCurrentMigration = Number(automation.safetyVersion || 0) < AUTOMATION_SAFETY_VERSION;
+    const migratedRequiredTags = automation.id === 'aut-default-ia'
+      ? (needsCurrentMigration
+          ? requiredTags.filter(tag => String(tag || '').trim().toLowerCase() !== 'contato inicial')
+          : requiredTags)
+      : (hasInitialContact ? requiredTags : [...requiredTags, 'Contato Inicial']);
 
     return {
       ...automation,
+      safetyVersion: AUTOMATION_SAFETY_VERSION,
       priority: automation.id === 'aut-transfer-human' ? 100 : 10,
       stopAfterMatch: automation.id === 'aut-transfer-human',
+      trigger: automation.id === 'aut-default-ia' ? 'lead_add' : automation.trigger,
       conditions: {
         ...(automation.conditions || {}),
         pipelineId: automation.conditions?.pipelineId && automation.conditions.pipelineId !== 'all'
           ? automation.conditions.pipelineId
           : 'name:Funil de vendas',
-        requiredTags: hasInitialContact ? requiredTags : [...requiredTags, 'Contato Inicial'],
+        // O evento lead_add ocorre antes de SalesBots/tags assíncronas do Kommo.
+        // No fluxo principal, pipeline + lista explícita de etapas são a trava confiável.
+        requiredTags: migratedRequiredTags,
         // Escopo explícito: não depende somente da ordem configurada no Kommo.
         // A migração reaplica a proteção mesmo após uma edição pelo painel.
         allowedStageNames: INITIAL_CONTACT_ALLOWED_STAGES,

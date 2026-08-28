@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { evaluateConditions, hasExplicitAutomationScope } from '../src/automationEvaluator.js';
+import {
+  automationAcceptsEvent,
+  evaluateConditions,
+  evaluateConditionsDetailed,
+  hasExplicitAutomationScope,
+} from '../src/automationEvaluator.js';
 
 const initialContactAutomation = {
   conditions: {
@@ -42,6 +47,18 @@ test('tag bloqueada prevalece sobre a tag obrigatória', () => {
     evaluateConditions(initialContactAutomation, contextWithTags(['Contato Inicial', 'Atendimento Humano'])),
     false,
   );
+});
+
+test('gatilho Novo Lead Criado não aceita eventos de nova mensagem', () => {
+  assert.equal(automationAcceptsEvent({ trigger: 'lead_add' }, 'lead_add'), true);
+  assert.equal(automationAcceptsEvent({ trigger: 'lead_add' }, 'message_add'), false);
+});
+
+test('diagnóstico informa quando a tag obrigatória está ausente', () => {
+  const result = evaluateConditionsDetailed(initialContactAutomation, contextWithTags(['Em Atendimento']));
+  assert.equal(result.matches, false);
+  assert.equal(result.reason, 'tag_obrigatoria_ausente');
+  assert.equal(result.detail, 'contato inicial');
 });
 
 test('etapa configurada bloqueia leads de outras colunas', () => {

@@ -22,7 +22,9 @@ No painel do Kommo, configure o webhook para:
 ```
 POST https://SEU_DOMINIO/webhook/cwbfightclub
 ```
-Selecione apenas: **message → add**
+Para a automação principal, selecione obrigatoriamente: **Lead adicionado / Novo lead criado** (`leads → add`).
+
+O evento **message → add** pode permanecer habilitado para automações separadas de mensagens, como transbordo humano, mas não substitui o evento de criação do lead.
 
 ## Rotas
 

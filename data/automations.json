@@ -3,6 +3,7 @@
     "id": "aut-default-ia",
     "name": "Atendimento Inteligente com IA",
     "description": "Responde automaticamente leads que enviarem mensagens pelo WhatsApp utilizando a base de conhecimento e IA.",
+    "safetyVersion": 4,
     "active": false,
     "priority": 10,
     "stopAfterMatch": false,
@@ -10,9 +11,7 @@
     "conditions": {
       "pipelineId": "name:Funil de vendas",
       "stageId": "all",
-      "requiredTags": [
-        "Contato Inicial"
-      ],
+      "requiredTags": [],
       "excludedTags": [
         "Atendimento Humano",
         "Nao Perturbe",
@@ -53,6 +52,7 @@
     "id": "aut-transfer-human",
     "name": "Transbordo para Atendimento Humano",
     "description": "Identifica quando um lead solicita atendente humano ou manifesta insatisfação e atualiza as tags no CRM.",
+    "safetyVersion": 4,
     "active": false,
     "priority": 100,
     "stopAfterMatch": true,
